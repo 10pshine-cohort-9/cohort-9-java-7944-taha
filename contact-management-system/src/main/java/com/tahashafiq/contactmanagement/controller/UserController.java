@@ -1,4 +1,6 @@
 package com.tahashafiq.contactmanagement.controller;
+import com.tahashafiq.contactmanagement.dto.GetUserDto;
+import com.tahashafiq.contactmanagement.dto.SignUpDto;
 import com.tahashafiq.contactmanagement.entity.UserEntity;
 import com.tahashafiq.contactmanagement.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,34 +16,57 @@ public class UserController {
     @Autowired
     private UserServiceImpl userService;
 
-    @GetMapping("/getAllUser")
-    public ResponseEntity<List<UserEntity>> getAllUser(){
-        return ResponseEntity.ok(userService.findAllUsers());
-    }
-
     @GetMapping("/getUserById/{userId}")
-    public ResponseEntity<UserEntity> getUserById(@PathVariable String userId){
-        UserEntity byId = userService.findById(userId);
-        if(byId == null){
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<GetUserDto> getUserById(@PathVariable String userId){
         return ResponseEntity.ok(userService.findById(userId));
     }
-
-    @PostMapping("/createUser")
-    public ResponseEntity<UserEntity> createUser(@RequestBody UserEntity user){
-        UserEntity createdUser = userService.createUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(user);
-       // return ResponseEntity.ok(userService.createUser(user));
+    @GetMapping("/getAllUser")
+    public ResponseEntity<List<GetUserDto>> getAllUser(){
+        return ResponseEntity.ok(userService.findAllUsers());
     }
-
+    @PostMapping("/signup")
+    public ResponseEntity<UserEntity> signup(@RequestBody SignUpDto postUserDto) {
+        UserEntity userEntity= userService.createUser(postUserDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userEntity);
+    }
     @DeleteMapping("/deleteUser/{userId}")
-    public ResponseEntity<UserEntity> deleteUser(@PathVariable String userId){
-        UserEntity byId = userService.findById(userId);
-        if(byId != null){
+    public ResponseEntity<GetUserDto> deleteUser(@PathVariable String userId){
+        GetUserDto userDto = userService.findById(userId);
+        if(userDto != null){
             userService.deleteUser(userId);
-            return ResponseEntity.ok(byId);
+            return ResponseEntity.ok(userDto);
         }
         return ResponseEntity.notFound().build();
     }
+
+    @PutMapping("/changeUser/{userName}")
+    public ResponseEntity<UserEntity> changeUser(
+            @PathVariable String userName,
+            @RequestBody SignUpDto user){
+        UserEntity byUserName = userService.findByUserName(userName);
+        if(byUserName != null){
+            if(user.getUserName()!=null && !user.getUserName().isEmpty()){
+                byUserName.setUserName(user.getUserName());
+            }
+            if(user.getFirstName()!=null && !user.getFirstName().isEmpty()){
+                byUserName.setFirstName(user.getFirstName());
+            }
+            if(user.getLastName()!=null && !user.getLastName().isEmpty()){
+                byUserName.setLastName(user.getLastName());
+            }
+            if(user.getEmail()!=null && !user.getEmail().isEmpty()){
+                byUserName.setEmail(user.getEmail());
+            }
+            if(user.getPassword()!=null && !user.getPassword().isEmpty()){
+                byUserName.setPassword(user.getPassword());
+            }
+        }
+        return ResponseEntity.ok(userService.saveUser(byUserName));
+    }
+
+//    @PutMapping("/updateUser/{userId}")
+//    public ResponseEntity<GetUserDto> updateUser(@PathVariable String userId,@RequestBody PostUserDto user){
+//        return ResponseEntity.ok(user);
+//    }
+
 }

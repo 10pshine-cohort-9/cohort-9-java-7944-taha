@@ -1,11 +1,12 @@
 package com.tahashafiq.contactmanagement.entity;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,15 +17,29 @@ import java.util.List;
 @Table(name = "User_Table")
 public class UserEntity {
     @Id
-    String UserId;
+    String userId;
+    @Column(nullable = false)
     String firstName;
+
+    @Column(nullable = false)
     String lastName;
+
+    @Column(unique = true)
+    String userName;
+
+    @Column(unique = true)
     String email;
+    @Column(nullable = false)
     String password;
-    String createdAt;
-    String updatedAt;
-    List<String> phoneNumber=new ArrayList<>();
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime  createdAt;
+    @Column
+    private String roles;
+
+    @UpdateTimestamp
+    private LocalDateTime  updatedAt;
     @OneToMany(mappedBy = "userEntity", fetch=FetchType.EAGER,cascade = CascadeType.ALL)
-    @JsonBackReference
+    @JsonManagedReference
     private List<ContactEntity> contactEntities=new ArrayList<>();
 }
