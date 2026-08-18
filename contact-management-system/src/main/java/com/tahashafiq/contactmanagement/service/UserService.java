@@ -13,14 +13,17 @@ public interface UserService {
     //finding a particular user by Id
      GetUserDto findById(String UserId);
      //finding a user by UserName
-    UserEntity findByUserName(String userName);
+      GetUserDto findByUserName(String userName);
      //Creating a particular User
      UserEntity createUser(SignUpDto postUserDto);
 
     //Deleting a Particular User
      void deleteUser(String UserId);
     //changing the fields of existing user
-      UserEntity updateUser(UserEntity userEntity);
+
+    UserEntity updateUser(UserEntity userEntity,SignUpDto signUpDto);
 
     public UserEntity findEntityByUserName(String userName);
+
+    UserEntity manageGoogleUser(String firstName, String lastName, String email, String providerId);
 }
