@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/demo_jpa
+    url: jdbc:postgresql://localhost:5432/contact-management
     username: postgres
     password: Malikpc2627.
 
@@ -13,3 +13,18 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - openid
+              - profile
+              - email
+
+
