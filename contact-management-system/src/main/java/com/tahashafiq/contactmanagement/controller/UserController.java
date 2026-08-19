@@ -3,70 +3,67 @@ import com.tahashafiq.contactmanagement.dto.GetUserDto;
 import com.tahashafiq.contactmanagement.dto.SignUpDto;
 import com.tahashafiq.contactmanagement.entity.UserEntity;
 import com.tahashafiq.contactmanagement.impl.UserServiceImpl;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/Users")
+@RequestMapping("/users")
+@Tag(name="User Apis")
+
 public class UserController {
     @Autowired
     private UserServiceImpl userService;
 
+
     @GetMapping("/getUserById/{userId}")
+
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Journals retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
+    @Operation(summary = "Getting the User by Id")
+    @Parameter(description = "UserId")
     public ResponseEntity<GetUserDto> getUserById(@PathVariable String userId){
         return ResponseEntity.ok(userService.findById(userId));
     }
-    @GetMapping("/getAllUser")
-    public ResponseEntity<List<GetUserDto>> getAllUser(){
-        return ResponseEntity.ok(userService.findAllUsers());
-    }
-    @PostMapping("/signup")
-    public ResponseEntity<UserEntity> signup(@RequestBody SignUpDto postUserDto) {
-        UserEntity userEntity= userService.createUser(postUserDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(userEntity);
-    }
-    @DeleteMapping("/deleteUser/{userId}")
-    public ResponseEntity<GetUserDto> deleteUser(@PathVariable String userId){
-        GetUserDto userDto = userService.findById(userId);
-        if(userDto != null){
-            userService.deleteUser(userId);
-            return ResponseEntity.ok(userDto);
-        }
-        return ResponseEntity.notFound().build();
+
+    @GetMapping("/getUserByUserName")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Journals retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
+    @Operation(summary = "Getting the User by UserName")
+    public ResponseEntity<GetUserDto> getUserByUserName(Authentication authentication){
+        String userName = authentication.getName();
+        return ResponseEntity.ok(userService.findByUserName(userName));
     }
 
-    @PutMapping("/changeUser/{userName}")
+    @PutMapping("/changeUser")
+    @Operation(summary = "Update a User entry")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "User updated successfully"),
+            @ApiResponse(responseCode = "404", description = "User not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid User data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
+
     public ResponseEntity<UserEntity> changeUser(
-            @PathVariable String userName,
-            @RequestBody SignUpDto user){
-        UserEntity byUserName = userService.findByUserName(userName);
-        if(byUserName != null){
-            if(user.getUserName()!=null && !user.getUserName().isEmpty()){
-                byUserName.setUserName(user.getUserName());
-            }
-            if(user.getFirstName()!=null && !user.getFirstName().isEmpty()){
-                byUserName.setFirstName(user.getFirstName());
-            }
-            if(user.getLastName()!=null && !user.getLastName().isEmpty()){
-                byUserName.setLastName(user.getLastName());
-            }
-            if(user.getEmail()!=null && !user.getEmail().isEmpty()){
-                byUserName.setEmail(user.getEmail());
-            }
-            if(user.getPassword()!=null && !user.getPassword().isEmpty()){
-                byUserName.setPassword(user.getPassword());
-            }
-        }
-        return ResponseEntity.ok(userService.saveUser(byUserName));
-    }
+            @RequestBody SignUpDto updatedUser,Authentication authentication){
 
-//    @PutMapping("/updateUser/{userId}")
-//    public ResponseEntity<GetUserDto> updateUser(@PathVariable String userId,@RequestBody PostUserDto user){
-//        return ResponseEntity.ok(user);
-//    }
+        String userName= authentication.getName();
+
+        UserEntity byUserName = userService.findEntityByUserName(userName);
+        UserEntity userEntity = userService.updateUser(byUserName, updatedUser);
+
+
+        return ResponseEntity.ok(userEntity);
+    }
 
 }
