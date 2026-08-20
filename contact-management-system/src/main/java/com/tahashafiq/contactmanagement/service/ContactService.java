@@ -7,7 +7,15 @@ import java.util.List;
 
 public interface ContactService {
     //get all the contacts
-//    public List<ContactEntity> getAllContacts(String userName);
+    List<ContactEntity> findAllContact();
+
+//get all contact of a particular user
+    public List<ContactEntity> findAllContactOfUser(String userName);
+//
+
+    //get all contacts of a particualr user
+
+    public List<ContactEntity> findContactsByUserName(String userName);
 
     //get contact by contact_id
 
@@ -18,13 +26,11 @@ public interface ContactService {
     public ContactEntity createContact(PostContactDto postContactDto, String userId);
 
     //update contact
-    public ContactEntity updateContact(ContactEntity contactEntity);
+    public ContactEntity updateContact(PostContactDto contactDto,ContactEntity contactEntity);
 
-    void deleteContactById(String contactId);
+    // delete contact
 
-    List<ContactEntity> findContactsByUserName(String userName);
-
-    List<ContactEntity> findAllContact();
+    public boolean deleteContactById(String contactId,String userName);
 
 
 }

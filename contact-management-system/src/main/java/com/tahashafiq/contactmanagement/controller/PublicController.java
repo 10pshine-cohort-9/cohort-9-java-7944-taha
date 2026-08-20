@@ -1,0 +1,78 @@
+package com.tahashafiq.contactmanagement.controller;
+import com.tahashafiq.contactmanagement.dto.LoginDto;
+import com.tahashafiq.contactmanagement.dto.SignUpDto;
+import com.tahashafiq.contactmanagement.entity.UserEntity;
+import com.tahashafiq.contactmanagement.impl.UserServiceImpl;
+import com.tahashafiq.contactmanagement.utils.JwtUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@Slf4j
+@RestController
+@RequestMapping("/public")
+@Tag(name="Public Apis")
+public class PublicController {
+    @Autowired
+    PasswordEncoder passwordEncoder;
+    @Autowired
+    AuthenticationManager authenticationManager;
+    @Autowired
+    private JwtUtils jwtUtils;
+    @Autowired
+    private UserServiceImpl userService;
+    @PostMapping("/signup")
+    @Operation(summary = "Sign Up The User")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Journal created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid journal data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
+    public ResponseEntity<UserEntity> signup(@RequestBody SignUpDto postUserDto) {
+        UserEntity userEntity= userService.createUser(postUserDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userEntity);
+    }
+    @PostMapping("/login")
+    @Operation(summary = "Sign In The User")
+    public ResponseEntity<String> login(@RequestBody LoginDto loginDto) {
+//        System.out.println(passwordEncoder.encode("MuhammadImran175"));
+//        System.out.println(
+//                passwordEncoder.matches(
+//                        "MuhammadImran175",
+//                        "$2a$10$ItQ0XDV0qGWmmIBKztp86uiEUW/Xnu1C6vbJJy7rnemhtGQI/.UKy"
+//                )
+//        );
+        Authentication authenticate = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginDto.getUserName(),
+                        loginDto.getPassword()
+                )
+        );
+        SecurityContextHolder.getContext().setAuthentication(authenticate);
+
+        UserEntity byUserName = userService.findEntityByUserName(loginDto.getUserName());
+        if(byUserName==null){
+            throw  new UsernameNotFoundException(loginDto.getUserName());
+        }
+        String Token = jwtUtils.generateToken(
+                byUserName.getUserName(),
+                byUserName.getRoles()
+        );
+        return ResponseEntity.ok(Token);
+    }
+}
