@@ -2,10 +2,7 @@ package com.tahashafiq.contactmanagement.entity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.tahashafiq.contactmanagement.provider.AuthProvider;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -14,7 +11,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -54,7 +52,7 @@ public class UserEntity {
 
     @UpdateTimestamp
     private LocalDateTime  updatedAt;
-    @OneToMany(mappedBy = "userEntity", fetch=FetchType.EAGER,cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "userEntity",cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<ContactEntity> contactEntities=new ArrayList<>();
 

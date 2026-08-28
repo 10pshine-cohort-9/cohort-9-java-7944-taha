@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -43,31 +44,27 @@ public class PublicController {
             @ApiResponse(responseCode = "400", description = "Invalid journal data"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
-    public ResponseEntity<UserEntity> signup(@RequestBody SignUpDto postUserDto) {
+    public ResponseEntity<UserEntity> signup(@Valid @RequestBody SignUpDto postUserDto) {
         UserEntity userEntity= userService.createUser(postUserDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(userEntity);
     }
     @PostMapping("/login")
     @Operation(summary = "Sign In The User")
     public ResponseEntity<String> login(@RequestBody LoginDto loginDto) {
-//        System.out.println(passwordEncoder.encode("MuhammadImran175"));
-//        System.out.println(
-//                passwordEncoder.matches(
-//                        "MuhammadImran175",
-//                        "$2a$10$ItQ0XDV0qGWmmIBKztp86uiEUW/Xnu1C6vbJJy7rnemhtGQI/.UKy"
-//                )
-//        );
+
+        LoginDto updatedLoginDto=new LoginDto();
+        updatedLoginDto=userService.signInOption(loginDto);
         Authentication authenticate = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        loginDto.getUserName(),
+                        updatedLoginDto.getUserName(),
                         loginDto.getPassword()
                 )
         );
         SecurityContextHolder.getContext().setAuthentication(authenticate);
 
-        UserEntity byUserName = userService.findEntityByUserName(loginDto.getUserName());
+        UserEntity byUserName = userService.findEntityByUserName(updatedLoginDto.getUserName());
         if(byUserName==null){
-            throw  new UsernameNotFoundException(loginDto.getUserName());
+            throw  new UsernameNotFoundException(updatedLoginDto.getUserName());
         }
         String Token = jwtUtils.generateToken(
                 byUserName.getUserName(),

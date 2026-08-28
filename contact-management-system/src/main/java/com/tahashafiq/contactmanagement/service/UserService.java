@@ -1,6 +1,7 @@
 package com.tahashafiq.contactmanagement.service;
 
 import com.tahashafiq.contactmanagement.dto.GetUserDto;
+import com.tahashafiq.contactmanagement.dto.LoginDto;
 import com.tahashafiq.contactmanagement.dto.SignUpDto;
 import com.tahashafiq.contactmanagement.entity.UserEntity;
 
@@ -26,4 +27,6 @@ public interface UserService {
     public UserEntity findEntityByUserName(String userName);
 
     UserEntity manageGoogleUser(String firstName, String lastName, String email, String providerId);
+
+    LoginDto signInOption(LoginDto loginDto);
 }
