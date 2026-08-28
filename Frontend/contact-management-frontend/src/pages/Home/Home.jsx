@@ -7,7 +7,7 @@ function Home() {
     const navigate = useNavigate();
 
     const handleGetStarted = () => {
-        navigate("/auth");
+        navigate("/get-started");
     };
 
     return (
@@ -25,7 +25,7 @@ function Home() {
                     <a href="#features">Features</a>
                     <button
                         className="nav-login-button"
-                        onClick={() => navigate("/auth")}
+                        onClick={() => navigate("/Signin")}
                     >
                         Login
                     </button>
