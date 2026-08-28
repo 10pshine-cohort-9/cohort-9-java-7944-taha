@@ -30,7 +30,7 @@ public interface ContactService {
 
     // delete contact
 
-    public boolean deleteContactById(String contactId,String userName);
+    public boolean deleteContactById(ContactEntity contact);
 
 
 }

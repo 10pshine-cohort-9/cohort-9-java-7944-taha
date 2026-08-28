@@ -8,5 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostContactDto {
+    private String userName;
     private String phoneNumber;
+    private String phoneLabel;
 }

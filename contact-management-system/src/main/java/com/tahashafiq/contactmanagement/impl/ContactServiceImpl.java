@@ -32,7 +32,8 @@ public class ContactServiceImpl implements ContactService {
 
     @Override
     public List<ContactEntity> findAllContactOfUser(String userName){
-        return contactRepository.findAllByUserName(userName);
+        UserEntity entityByUserName = userService.findEntityByUserName(userName);
+        return entityByUserName.getContactEntities();
     }
 
     @Override
@@ -44,7 +45,7 @@ public class ContactServiceImpl implements ContactService {
 
     @Override
     public ContactEntity createContact(PostContactDto contactEntityDto, String userName) {
-        ContactEntity contactEntity = mapToContactDto(contactEntityDto,userName);
+        ContactEntity contactEntity = mapToContactDto(contactEntityDto);
            UserEntity userEntity= userService.findEntityByUserName(userName);
            contactEntity.setUserEntity(userEntity);
            userEntity.getContactEntities().add(contactEntity);
@@ -57,19 +58,23 @@ public class ContactServiceImpl implements ContactService {
         if(updatedContact.getPhoneNumber()!=null && !updatedContact.getPhoneNumber().isEmpty()){
             existedContact.setPhoneNumber(updatedContact.getPhoneNumber());
         }
+        if(updatedContact.getUserName()!=null && !updatedContact.getUserName().isEmpty()){
+            existedContact.setUserName(updatedContact.getUserName());
+        }
+        if(updatedContact.getPhoneLabel()!=null && !updatedContact.getPhoneLabel().isEmpty()){
+            existedContact.setPhoneLabel(updatedContact.getPhoneLabel());
+        }
        return contactRepository.save(existedContact);
     }
 
     @Override
-    public boolean deleteContactById(String contactId,String  userName) {
-        ContactEntity contact = contactRepository
-                .findByContactIdAndUserName(contactId, userName)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Contact not found"));
+    public boolean deleteContactById(ContactEntity contactEntity) {
 
-        contactRepository.delete(contact);
 
-        log.info("Contact with id {} deleted successfully", contactId);
+        contactRepository.delete(contactEntity);
+
+
+        log.info("Contact with details {} deleted successfully", contactEntity);
 
         return true;
     }
@@ -83,12 +88,11 @@ public class ContactServiceImpl implements ContactService {
         return byUserName;
     }
 
-    ContactEntity mapToContactDto(PostContactDto contactDto,String userName) {
+    ContactEntity mapToContactDto(PostContactDto contactDto) {
         ContactEntity contactEntity = new ContactEntity();
         contactEntity.setContactId(UUID.randomUUID().toString());
         contactEntity.setPhoneNumber(contactDto.getPhoneNumber());
-        contactEntity.setUserName(userName);
+        contactEntity.setUserName(contactDto.getUserName());
         return  contactEntity;
     }
-
 }

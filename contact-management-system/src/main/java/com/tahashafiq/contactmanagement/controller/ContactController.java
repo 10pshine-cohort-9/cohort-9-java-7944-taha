@@ -1,4 +1,5 @@
 package com.tahashafiq.contactmanagement.controller;
+import com.tahashafiq.contactmanagement.Exception.ResourceNotFoundException;
 import com.tahashafiq.contactmanagement.dto.PostContactDto;
 import com.tahashafiq.contactmanagement.entity.ContactEntity;
 import com.tahashafiq.contactmanagement.impl.ContactServiceImpl;
@@ -22,15 +23,6 @@ import java.util.List;
 public class ContactController {
     @Autowired
     private ContactServiceImpl contactService;
-    @GetMapping("/getAllContact")
-    @Operation(summary = "get all the contact")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Contacts retrieved successfully"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized")
-    })
-    public ResponseEntity<List<ContactEntity>> getAllContact() {
-        return ResponseEntity.ok(contactService.findAllContact());
-    }
 
     @GetMapping("/getContactOfUser")
     @Operation(summary = "get all the contact of User")
@@ -85,13 +77,14 @@ public class ContactController {
             @PathVariable String contactId,
             @RequestBody PostContactDto contactDto,
             Authentication authentication){
-        String userName = authentication.getName();
-
+        String authUserName = authentication.getName();
         ContactEntity contactById = contactService.getContactById(contactId);
-        if(contactById != null) {
-            if(!contactById.getUserName().equals(userName)) {
-                log.error("contactId corresponding to username is not found");
+        String userName1 = contactById.getUserEntity().getUserName();
+        if(!userName1.equals(authUserName)){
+            if (log.isErrorEnabled()) {
+                log.error("username not matched");
             }
+            throw new ResourceNotFoundException("the UserName corresponding to the Contact Entity and The One Received through the authenictation are not matched ");
         }
         return ResponseEntity.ok(contactService.updateContact(contactDto,contactById));
     }
@@ -109,11 +102,15 @@ public class ContactController {
             @PathVariable String contactId,
             Authentication authentication){
         String userName = authentication.getName();
-        boolean removed = contactService.deleteContactById(contactId, userName);
-        if (removed) {
-            return ResponseEntity.ok(contactService.getContactById(contactId));
+        ContactEntity contactById = contactService.getContactById(contactId);
+        String userName1 = contactById.getUserEntity().getUserName();
+        if(!userName1.equals(userName)){
+            log.error("username corresponding to the searched one does not matched");
+            throw new ResourceNotFoundException("username not matched");
         }
-        return ResponseEntity.notFound().build();
+
+        contactService.deleteContactById(contactById);
+        return ResponseEntity.noContent().build();
 
     }
 }
