@@ -1,0 +1,1148 @@
+
+/* =========================
+   Dashboard Layout
+========================= */
+
+.dashboard-page {
+    min-height: 100vh;
+    display: flex;
+    background: #f5f7fb;
+    font-family: Arial, sans-serif;
+    color: #111827;
+}
+
+
+/* =========================
+   Sidebar
+========================= */
+
+.sidebar {
+    width: 240px;
+    min-height: 100vh;
+
+    background: #ffffff;
+
+    border-right:
+        1px solid #e5e7eb;
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 30px 20px;
+
+    box-sizing: border-box;
+}
+
+
+.brand {
+    font-size: 24px;
+    font-weight: bold;
+
+    margin-bottom: 50px;
+
+    color: #111827;
+}
+
+
+.brand span {
+    color: #2563eb;
+}
+
+
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+
+.sidebar-menu button {
+    border: none;
+
+    background: transparent;
+
+    padding: 14px;
+
+    text-align: left;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-size: 16px;
+
+    color: #374151;
+
+    transition:
+        all 0.2s ease;
+}
+
+
+.sidebar-menu button:hover,
+.sidebar-menu .active {
+    background: #eef4ff;
+
+    color: #2563eb;
+}
+
+
+.logout-button {
+    margin-top: auto;
+
+    border: none;
+
+    padding: 12px;
+
+    background: #fee2e2;
+
+    color: #dc2626;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-size: 15px;
+
+    transition:
+        all 0.2s ease;
+}
+
+
+.logout-button:hover {
+    background: #fecaca;
+}
+
+
+/* =========================
+   Main Dashboard
+========================= */
+
+.dashboard-content {
+    flex: 1;
+
+    padding: 40px;
+
+    min-width: 0;
+
+    box-sizing: border-box;
+}
+
+
+.dashboard-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 30px;
+
+    gap: 20px;
+}
+
+
+.dashboard-header h1 {
+    margin:
+        0
+        0
+        5px;
+
+    font-size: 32px;
+
+    color: #111827;
+}
+
+
+.dashboard-header p {
+    margin: 0;
+
+    color: #6b7280;
+
+    font-size: 15px;
+}
+
+
+/* =========================
+   Add Contact Button
+========================= */
+
+.add-contact-button {
+    border: none;
+
+    background: #2563eb;
+
+    color: #ffffff;
+
+    padding: 12px 20px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    transition:
+        all 0.2s ease;
+}
+
+
+.add-contact-button:hover {
+    background: #1d4ed8;
+
+    transform:
+        translateY(-1px);
+}
+
+
+.add-contact-button:active {
+    transform:
+        translateY(0);
+}
+
+
+/* =========================
+   Search Contact
+========================= */
+
+.contact-search-container {
+    width: 100%;
+
+    max-width: 600px;
+
+    position: relative;
+
+    margin-bottom: 35px;
+}
+
+
+.search-icon {
+    position: absolute;
+
+    left: 15px;
+
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+
+    font-size: 15px;
+
+    pointer-events: none;
+}
+
+
+.contact-search-input {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding:
+        13px
+        16px
+        13px
+        45px;
+
+    border:
+        1px solid #d1d5db;
+
+    border-radius: 9px;
+
+    background: #ffffff;
+
+    font-size: 14px;
+
+    color: #111827;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.contact-search-input::placeholder {
+    color: #9ca3af;
+}
+
+
+.contact-search-input:focus {
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(
+            37,
+            99,
+            235,
+            0.12
+        );
+}
+
+
+/* =========================
+   Error Message
+========================= */
+
+.dashboard-error {
+    background: #fef2f2;
+
+    border:
+        1px solid #fecaca;
+
+    color: #dc2626;
+
+    padding:
+        12px 16px;
+
+    border-radius: 8px;
+
+    margin-bottom: 20px;
+}
+
+
+/* =========================
+   Contacts Grid
+   2 Cards Per Row
+========================= */
+
+.contacts-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 24px;
+
+    margin-top: 10px;
+}
+
+
+/* =========================
+   Contact Card
+========================= */
+
+.contact-card {
+    background: #ffffff;
+
+    padding: 22px;
+
+    border-radius: 14px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+
+    position: relative;
+
+    box-shadow:
+        0 2px 10px
+        rgba(
+            0,
+            0,
+            0,
+            0.05
+        );
+
+    border:
+        1px solid transparent;
+
+    transition:
+        all 0.2s ease;
+
+    min-width: 0;
+
+    overflow: visible;
+}
+
+
+.contact-card:hover {
+    transform:
+        translateY(-2px);
+
+    border-color: #dbeafe;
+
+    box-shadow:
+        0 6px 18px
+        rgba(
+            0,
+            0,
+            0,
+            0.08
+        );
+}
+
+
+/* =========================
+   Contact Avatar
+========================= */
+
+.contact-avatar {
+    width: 52px;
+
+    height: 52px;
+
+    min-width: 52px;
+
+    border-radius: 50%;
+
+    background: #dbeafe;
+
+    color: #2563eb;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-weight: bold;
+
+    font-size: 21px;
+}
+
+
+/* =========================
+   Contact Information
+========================= */
+
+.contact-info {
+    flex: 1;
+
+    min-width: 0;
+}
+
+
+.contact-info h3 {
+    margin: 0;
+
+    font-size: 18px;
+
+    color: #111827;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+.contact-info p {
+    margin:
+        6px
+        0
+        9px;
+
+    color: #6b7280;
+
+    font-size: 14px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+.contact-info span {
+    display: inline-block;
+
+    font-size: 12px;
+
+    background: #f3f4f6;
+
+    color: #4b5563;
+
+    padding:
+        5px
+        10px;
+
+    border-radius: 20px;
+}
+
+
+/* =========================
+   Contact Actions
+========================= */
+
+.contact-actions {
+    position: relative;
+
+    flex-shrink: 0;
+
+    min-width: 38px;
+
+    min-height: 38px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+
+/* =========================
+   Three Dots Button
+========================= */
+
+.action-menu-button {
+    width: 38px;
+
+    height: 38px;
+
+    border: none;
+
+    background: transparent;
+
+    color: #64748b;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    font-size: 25px;
+
+    line-height: 1;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+
+.action-menu-button:hover {
+    background: #f1f5f9;
+
+    color: #2563eb;
+}
+
+
+/* =========================
+   Action Popup
+========================= */
+
+.action-popup {
+    position: absolute;
+
+    right: 0;
+
+    top: 0;
+
+    width: 150px;
+
+    background: #ffffff;
+
+    border:
+        1px solid #e5e7eb;
+
+    border-radius: 12px;
+
+    padding: 6px;
+
+    box-sizing: border-box;
+
+    box-shadow:
+        0 12px 30px
+        rgba(
+            15,
+            23,
+            42,
+            0.16
+        );
+
+    z-index: 100;
+
+    animation:
+        actionMenuAppear
+        0.15s ease-out;
+}
+
+
+/* =========================
+   Action Buttons
+========================= */
+
+.action-popup button {
+    width: 100%;
+
+    border: none;
+
+    background: transparent;
+
+    padding:
+        11px
+        12px;
+
+    border-radius: 8px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    text-align: left;
+
+    transition:
+        background 0.2s ease,
+        transform 0.15s ease;
+}
+
+
+.action-popup button:hover {
+    transform:
+        translateX(2px);
+}
+
+
+/* =========================
+   Edit Button
+========================= */
+
+.edit-action {
+    color: #2563eb;
+}
+
+
+.edit-action:hover {
+    background: #eff6ff;
+}
+
+
+/* =========================
+   Delete Button
+========================= */
+
+.delete-action {
+    color: #dc2626;
+}
+
+
+.delete-action:hover {
+    background: #fef2f2;
+}
+
+
+/* =========================
+   Action Popup Animation
+========================= */
+
+@keyframes actionMenuAppear {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(-6px)
+            scale(0.97);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+
+    }
+
+}
+
+
+/* =========================
+   Empty State
+========================= */
+
+.empty-state {
+    background: #ffffff;
+
+    padding:
+        60px
+        30px;
+
+    text-align: center;
+
+    border-radius: 12px;
+
+    border:
+        1px solid #e5e7eb;
+
+    margin-top: 10px;
+}
+
+
+.empty-state h2 {
+    margin:
+        0
+        0
+        10px;
+
+    color: #111827;
+}
+
+
+.empty-state p {
+    margin: 0;
+
+    color: #6b7280;
+}
+
+
+/* =========================
+   Contact Modal
+========================= */
+
+.contact-modal {
+    position: fixed;
+
+    inset: 0;
+
+    background:
+        rgba(
+            17,
+            24,
+            39,
+            0.55
+        );
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    z-index: 1000;
+}
+
+
+/* =========================
+   Contact Form Card
+========================= */
+
+.contact-form-card {
+    width: 100%;
+
+    max-width: 480px;
+
+    background: #ffffff;
+
+    border-radius: 14px;
+
+    padding: 30px;
+
+    box-sizing: border-box;
+
+    box-shadow:
+        0 20px 50px
+        rgba(
+            0,
+            0,
+            0,
+            0.2
+        );
+
+    animation:
+        modalAppear
+        0.2s ease-out;
+}
+
+
+.contact-form-card h2 {
+    margin:
+        0
+        0
+        25px;
+
+    font-size: 24px;
+
+    color: #111827;
+}
+
+
+/* =========================
+   Form
+========================= */
+
+.form-group {
+    display: flex;
+
+    flex-direction: column;
+
+    margin-bottom: 18px;
+}
+
+
+.form-group label {
+    margin-bottom: 7px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    color: #374151;
+}
+
+
+.form-group input,
+.form-group select {
+    width: 100%;
+
+    padding:
+        11px
+        12px;
+
+    border:
+        1px solid #d1d5db;
+
+    border-radius: 8px;
+
+    font-size: 14px;
+
+    color: #111827;
+
+    background: #ffffff;
+
+    box-sizing: border-box;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.form-group input::placeholder {
+    color: #9ca3af;
+}
+
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(
+            37,
+            99,
+            235,
+            0.12
+        );
+}
+
+
+/* =========================
+   Form Buttons
+========================= */
+
+.form-actions {
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    margin-top: 25px;
+}
+
+
+.form-actions button {
+    border: none;
+
+    padding:
+        11px
+        18px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    transition:
+        all 0.2s ease;
+}
+
+
+.form-actions button[type="button"] {
+    background: #f3f4f6;
+
+    color: #374151;
+}
+
+
+.form-actions button[type="button"]:hover {
+    background: #e5e7eb;
+}
+
+
+.form-actions button[type="submit"] {
+    background: #2563eb;
+
+    color: #ffffff;
+}
+
+
+.form-actions button[type="submit"]:hover {
+    background: #1d4ed8;
+}
+
+
+/* =========================
+   Modal Animation
+========================= */
+
+@keyframes modalAppear {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(-10px)
+            scale(0.98);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+
+    }
+
+}
+
+
+/* =========================
+   Loading
+========================= */
+
+.dashboard-content > p {
+    color: #6b7280;
+}
+
+
+/* =========================
+   Tablet
+========================= */
+
+@media (max-width: 1000px) {
+
+    .sidebar {
+        width: 210px;
+    }
+
+
+    .dashboard-content {
+        padding: 30px;
+    }
+
+
+    .contacts-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 18px;
+    }
+
+
+    .contact-card {
+        padding: 18px;
+
+        gap: 14px;
+    }
+
+}
+
+
+/* =========================
+   Smaller Tablet
+========================= */
+
+@media (max-width: 800px) {
+
+    .contacts-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+}
+
+
+/* =========================
+   Mobile
+========================= */
+
+@media (max-width: 700px) {
+
+    .dashboard-page {
+        flex-direction: column;
+    }
+
+
+    .sidebar {
+        width: 100%;
+
+        min-height: auto;
+
+        padding: 18px;
+
+        border-right: none;
+
+        border-bottom:
+            1px solid #e5e7eb;
+    }
+
+
+    .brand {
+        margin-bottom: 18px;
+    }
+
+
+    .sidebar-menu {
+        flex-direction: row;
+    }
+
+
+    .sidebar-menu button {
+        flex: 1;
+    }
+
+
+    .logout-button {
+        margin-top: 15px;
+    }
+
+
+    .dashboard-content {
+        padding:
+            25px
+            20px;
+    }
+
+
+    .dashboard-header {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        margin-bottom: 25px;
+    }
+
+
+    .add-contact-button {
+        width: 100%;
+    }
+
+
+    .contact-search-container {
+        max-width: 100%;
+
+        margin-bottom: 30px;
+    }
+
+
+    .contacts-grid {
+        grid-template-columns:
+            1fr;
+
+        margin-top: 0;
+    }
+
+}
+
+
+/* =========================
+   Small Mobile
+========================= */
+
+@media (max-width: 480px) {
+
+    .dashboard-header h1 {
+        font-size: 26px;
+    }
+
+
+    .contact-card {
+        padding: 16px;
+
+        gap: 12px;
+    }
+
+
+    .contact-avatar {
+        width: 46px;
+
+        height: 46px;
+
+        min-width: 46px;
+
+        font-size: 18px;
+    }
+
+
+    .contact-info h3 {
+        font-size: 16px;
+    }
+
+
+    .action-popup {
+        width: 140px;
+    }
+
+
+    .contact-form-card {
+        padding: 22px;
+    }
+
+
+    .contact-form-card h2 {
+        font-size: 21px;
+    }
+
+
+    .form-actions {
+        flex-direction:
+            column-reverse;
+    }
+
+
+    .form-actions button {
+        width: 100%;
+    }
+
+}
