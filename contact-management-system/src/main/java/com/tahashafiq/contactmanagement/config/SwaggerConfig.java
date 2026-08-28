@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
 
 @Configuration
 public class SwaggerConfig {
@@ -24,10 +24,10 @@ public class SwaggerConfig {
                                 .title("Contact Management APP")
                                 .description("Created By Taha Shafiq as 10Pearls Shine Internship Project"))
                 .servers(
-                        Arrays.asList( new Server()
+                        Collections.singletonList(new Server()
                                 .url("http://localhost:8080")
                                 .description("local")
-                ))
+                        ))
                 .tags(Arrays.asList(
                         new Tag().name("Admin Apis"),
                         new Tag().name("Public Apis"),
