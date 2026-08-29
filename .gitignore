@@ -1,0 +1,20 @@
+# Node
+node_modules/
+
+# Frontend build
+dist/
+build/
+
+# Spring Boot
+target/
+**/target/
+
+# Logs
+logs/
+**/logs/
+*.log
+
+# IDE
+.idea/
+*.iml
+.vscode/

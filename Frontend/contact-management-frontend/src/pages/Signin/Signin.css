@@ -1,0 +1,288 @@
+.signin-page {
+    min-height: 100vh;
+    background: #f5f7fb;
+    display: flex;
+    flex-direction: column;
+}
+
+.signin-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 80px;
+    padding: 60px 30px;
+}
+
+/* LEFT */
+
+.signin-info {
+    max-width: 480px;
+}
+
+.signin-logo {
+    font-size: 25px;
+    font-weight: 700;
+    margin-bottom: 45px;
+}
+
+.signin-logo span {
+    color: #2563eb;
+}
+
+.signin-info h1 {
+    font-size: 52px;
+    line-height: 1.1;
+    margin-bottom: 25px;
+}
+
+.signin-info h1 span {
+    color: #2563eb;
+}
+
+.signin-info > p {
+    color: #64748b;
+    font-size: 17px;
+    line-height: 1.7;
+}
+
+.signin-benefits {
+    margin-top: 35px;
+}
+
+.benefit {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 15px 0;
+}
+
+.benefit span {
+    width: 25px;
+    height: 25px;
+    background: #2563eb;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.benefit p {
+    margin: 0;
+    color: #475569;
+}
+
+
+/* CARD */
+
+.signin-card {
+    width: 420px;
+    background: white;
+    padding: 40px;
+    border-radius: 18px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+}
+
+.signin-card h2 {
+    margin: 0;
+    font-size: 30px;
+}
+
+.signin-subtitle {
+    color: #64748b;
+    margin-bottom: 30px;
+}
+
+
+/* ERROR */
+
+.signin-error {
+    background: #fee2e2;
+    color: #b91c1c;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+
+/* INPUT */
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.input-group input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 13px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+}
+
+.input-group input:focus {
+    border-color: #2563eb;
+}
+
+
+/* PASSWORD */
+
+.password-container {
+    position: relative;
+}
+
+.password-container input {
+    padding-right: 65px;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    color: #2563eb;
+    cursor: pointer;
+}
+
+
+/* SIGN IN */
+
+.signin-button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.signin-button:hover {
+    background: #1d4ed8;
+}
+
+.signin-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+
+/* SIGNUP */
+
+.signup-section {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 25px;
+    font-size: 14px;
+}
+
+.signup-link {
+    border: none;
+    background: none;
+    color: #2563eb;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+
+/* GOOGLE */
+
+.google-section {
+    margin-top: 20px;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.divider::before,
+.divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #e2e8f0;
+}
+
+.divider span {
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+.google-button {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #cbd5e1;
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.google-button:hover {
+    background: #f8fafc;
+}
+
+
+/* BACK */
+
+.back-button {
+    width: 100%;
+    margin-top: 18px;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    cursor: pointer;
+}
+
+
+/* FOOTER */
+
+.signin-page footer {
+    text-align: center;
+    padding: 20px;
+    color: #64748b;
+    font-size: 13px;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 900px) {
+
+    .signin-wrapper {
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .signin-info {
+        text-align: center;
+    }
+
+    .signin-info h1 {
+        font-size: 40px;
+    }
+
+    .signin-card {
+        width: 100%;
+        max-width: 420px;
+        box-sizing: border-box;
+    }
+}
