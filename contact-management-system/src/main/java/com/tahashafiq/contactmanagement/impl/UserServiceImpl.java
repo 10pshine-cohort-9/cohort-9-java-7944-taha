@@ -1,6 +1,7 @@
 package com.tahashafiq.contactmanagement.impl;
 
 import com.tahashafiq.contactmanagement.dto.GetUserDto;
+import com.tahashafiq.contactmanagement.dto.LoginDto;
 import com.tahashafiq.contactmanagement.dto.SignUpDto;
 import com.tahashafiq.contactmanagement.entity.ContactEntity;
 import com.tahashafiq.contactmanagement.entity.UserEntity;
@@ -24,6 +25,33 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     UserRepository userRepository;
+
+    @Override
+    public LoginDto signInOption(LoginDto loginDto) {
+        if ((loginDto.getUserName() == null ||
+                        loginDto.getUserName().isBlank())
+                        &&
+                        loginDto.getEmail() != null &&
+                        !loginDto.getEmail().isBlank()) {
+
+            UserEntity user =
+                    userRepository.findByEmail(
+                            loginDto.getEmail()
+                    );
+
+            if (user == null) {
+                throw new RuntimeException(
+                        "User not found with this email"
+                );
+            }
+
+            return maptoLoginDto(user);
+        }
+
+        return loginDto;
+    }
+
+
     @Override
     public List<GetUserDto> findAllUsers() {
         List<UserEntity> allUser = userRepository.findAll();
@@ -82,9 +110,10 @@ public class UserServiceImpl implements UserService {
                 byUserName.setEmail(updatedUser.getEmail());
             }
             if(updatedUser.getPassword()!=null && !updatedUser.getPassword().isEmpty()){
-                byUserName.setPassword(updatedUser.getPassword());
+                byUserName.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
             }
         }
+        assert byUserName != null;
         return userRepository.save(byUserName);
     }
 
@@ -94,7 +123,8 @@ public class UserServiceImpl implements UserService {
     }
 
     public UserEntity findEntityByUserName(String userName) {
-        return userRepository.findByUserName(userName);
+        UserEntity byUserName = userRepository.findByUserName(userName);
+        return byUserName;
     }
 
 
@@ -163,4 +193,14 @@ public class UserServiceImpl implements UserService {
 
      return userRepository.save(userEntity);
     }
+
+    private LoginDto maptoLoginDto(UserEntity byEmail) {
+        LoginDto loginDto = new LoginDto();
+        loginDto.setEmail(byEmail.getEmail());
+        loginDto.setPassword(byEmail.getPassword());
+        loginDto.setUserName(byEmail.getUserName());
+        return  loginDto;
+    }
+
+
 }

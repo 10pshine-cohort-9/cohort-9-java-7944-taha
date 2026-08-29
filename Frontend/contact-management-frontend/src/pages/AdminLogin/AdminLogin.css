@@ -1,0 +1,220 @@
+.admin-login-page {
+
+    min-height: 100vh;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    background: #f5f7fb;
+
+    padding: 20px;
+
+}
+
+
+.admin-login-card {
+
+    width: 100%;
+
+    max-width: 420px;
+
+    background: white;
+
+    padding: 40px;
+
+    border-radius: 18px;
+
+    box-sizing: border-box;
+
+    box-shadow:
+        0 15px 40px
+        rgba(0, 0, 0, 0.08);
+
+}
+
+
+.admin-back-button {
+
+    border: none;
+
+    background: transparent;
+
+    color: #64748b;
+
+    padding: 0;
+
+    margin-bottom: 30px;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+}
+
+
+.admin-login-header {
+
+    margin-bottom: 30px;
+
+}
+
+
+.admin-login-header h1 {
+
+    margin: 0 0 10px;
+
+    font-size: 32px;
+
+}
+
+
+.admin-login-header h1 span {
+
+    color: #2563eb;
+
+}
+
+
+.admin-login-header p {
+
+    color: #64748b;
+
+    margin: 0;
+
+}
+
+
+.admin-login-error {
+
+    background: #fee2e2;
+
+    color: #b91c1c;
+
+    padding: 12px;
+
+    border-radius: 8px;
+
+    margin-bottom: 20px;
+
+}
+
+
+.admin-input-group {
+
+    margin-bottom: 20px;
+
+}
+
+
+.admin-input-group label {
+
+    display: block;
+
+    font-weight: 600;
+
+    margin-bottom: 8px;
+
+}
+
+
+.admin-input-group input {
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 13px;
+
+    border: 1px solid #cbd5e1;
+
+    border-radius: 8px;
+
+    font-size: 15px;
+
+    outline: none;
+
+}
+
+
+.admin-input-group input:focus {
+
+    border-color: #2563eb;
+
+}
+
+
+.admin-password-container {
+
+    position: relative;
+
+}
+
+
+.admin-password-container input {
+
+    padding-right: 65px;
+
+}
+
+
+.admin-password-container button {
+
+    position: absolute;
+
+    right: 10px;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    border: none;
+
+    background: transparent;
+
+    color: #2563eb;
+
+    cursor: pointer;
+
+}
+
+
+.admin-submit-button {
+
+    width: 100%;
+
+    padding: 14px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #2563eb;
+
+    color: white;
+
+    font-size: 16px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+}
+
+
+.admin-submit-button:hover {
+
+    background: #1d4ed8;
+
+}
+
+
+.admin-submit-button:disabled {
+
+    opacity: 0.7;
+
+    cursor: not-allowed;
+
+}
