@@ -10,27 +10,27 @@ public interface ContactService {
     List<ContactEntity> findAllContact();
 
 //get all contact of a particular user
-    public List<ContactEntity> findAllContactOfUser(String userName);
+    List<ContactEntity> findAllContactOfUser(String userName);
 //
 
     //get all contacts of a particualr user
 
-    public List<ContactEntity> findContactsByUserName(String userName);
+    List<ContactEntity> findContactsByUserName(String userName);
 
     //get contact by contact_id
 
-    public ContactEntity getContactById(String UserId);
+    ContactEntity getContactById(String userId);
 
     //create contact
 
-    public ContactEntity createContact(PostContactDto postContactDto, String userId);
+    ContactEntity createContact(PostContactDto postContactDto, String userId);
 
     //update contact
-    public ContactEntity updateContact(PostContactDto contactDto,ContactEntity contactEntity);
+    ContactEntity updateContact(PostContactDto contactDto,ContactEntity contactEntity);
 
     // delete contact
 
-    public boolean deleteContactById(ContactEntity contact);
+    void deleteContactById(ContactEntity contact);
 
 
 }

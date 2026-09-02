@@ -7,11 +7,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 @Component
 public class JwtUtils {
+    Instant now = Instant.now();
 
     public String extractUserName(String token) {
         Claims claims = extractAllClaims(token);
@@ -51,8 +54,8 @@ public class JwtUtils {
                 .subject(subject)
                 .header().empty().add("typ","JWT")
                 .and()
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 10000 * 60*120))
+                .issuedAt(Date.from(now))
+                .expiration(Date.from(now.plus(20, ChronoUnit.HOURS)))
                 .signWith(getSigningKey())
                 .compact();
     }

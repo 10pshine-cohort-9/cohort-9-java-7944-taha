@@ -1,29 +1,32 @@
 package com.tahashafiq.contactmanagement.impl;
 
-import com.tahashafiq.contactmanagement.Exception.ResourceNotFoundException;
-import com.tahashafiq.contactmanagement.dto.GetUserDto;
+import com.tahashafiq.contactmanagement.exception.ResourceNotFoundException;
+
 import com.tahashafiq.contactmanagement.dto.PostContactDto;
 import com.tahashafiq.contactmanagement.entity.ContactEntity;
 import com.tahashafiq.contactmanagement.entity.UserEntity;
 import com.tahashafiq.contactmanagement.repository.ContactRepository;
 import com.tahashafiq.contactmanagement.service.ContactService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Stream;
+
 
 @Service
 @Slf4j
 public class ContactServiceImpl implements ContactService {
 
-    @Autowired
-    private ContactRepository contactRepository;
-    @Autowired
-    private UserServiceImpl userService;
 
+    private final ContactRepository contactRepository;
+    private final UserServiceImpl userService;
+
+    ContactServiceImpl(ContactRepository contactRepository, UserServiceImpl userService) {
+        this.contactRepository = contactRepository;
+        this.userService = userService;
+    }
 
     @Override
     public List<ContactEntity> findAllContact() {
@@ -49,7 +52,6 @@ public class ContactServiceImpl implements ContactService {
            UserEntity userEntity= userService.findEntityByUserName(userName);
            contactEntity.setUserEntity(userEntity);
            userEntity.getContactEntities().add(contactEntity);
-        System.out.println(userEntity.getContactEntities().size());
            userService.saveUser(userEntity);
         return contactEntity;
     }
@@ -68,7 +70,7 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    public boolean deleteContactById(ContactEntity contactEntity) {
+    public void deleteContactById(ContactEntity contactEntity) {
 
 
         contactRepository.delete(contactEntity);
@@ -76,7 +78,6 @@ public class ContactServiceImpl implements ContactService {
 
         log.info("Contact with details {} deleted successfully", contactEntity);
 
-        return true;
     }
 
     @Override

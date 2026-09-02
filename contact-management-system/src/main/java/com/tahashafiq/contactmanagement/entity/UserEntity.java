@@ -5,8 +5,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
-import java.security.Provider;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +21,6 @@ public class UserEntity {
     String userId;
     @Column(nullable = false)
     String firstName;
-
-    @Column(nullable = true)
     String lastName;
 
     @Column(unique = true)

@@ -4,7 +4,8 @@ import com.tahashafiq.contactmanagement.utils.JwtUtils;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,29 +14,29 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+@Slf4j
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private JwtUtils  jwtUtils;
-
-    @Autowired
-    JwtServiceImplementation jwtServiceImplementation;
+    private final JwtUtils  jwtUtils;
+    final JwtServiceImplementation jwtServiceImplementation;
+    JwtFilter(JwtUtils jwtUtils, JwtServiceImplementation jwtServiceImplementation) {
+        this.jwtUtils = jwtUtils;
+        this.jwtServiceImplementation = jwtServiceImplementation;
+    }
     @Override
-
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException,IOException {
+    protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain chain) throws ServletException,IOException {
         String authorization = request.getHeader("Authorization");
-        String userName=null;
-        String jwt=null;
+        String userName;
+        String jwt;
         if(authorization != null && authorization.startsWith("Bearer ")) {
            jwt = authorization.substring(7);
            userName=jwtUtils.extractUserName(jwt);
 
-               if (jwtUtils.validateToken(jwt)){
-                   if(userName!=null) {
+               if (jwtUtils.validateToken(jwt) && userName!=null) {
                        UserDetails userDetails = jwtServiceImplementation.loadUserByUsername(userName);
-                       System.out.println("USERNAME: " + userDetails.getUsername());
-                       System.out.println("AUTHORITIES: " + userDetails.getAuthorities());
+                       log.info("USERNAME: " + userDetails.getUsername());
+                       log.info("AUTHORITIES: " + userDetails.getAuthorities());
                    UsernamePasswordAuthenticationToken auth =
                            new UsernamePasswordAuthenticationToken(userDetails,
                                    null,
@@ -44,7 +45,6 @@ public class JwtFilter extends OncePerRequestFilter {
                    SecurityContextHolder
                            .getContext()
                            .setAuthentication(auth);
-               }
            }
 
         }

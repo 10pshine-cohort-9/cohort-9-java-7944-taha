@@ -1,12 +1,12 @@
 package com.tahashafiq.contactmanagement.controller;
-import com.tahashafiq.contactmanagement.Exception.ResourceNotFoundException;
+import com.tahashafiq.contactmanagement.exception.ResourceNotFoundException;
 import com.tahashafiq.contactmanagement.dto.PostContactDto;
 import com.tahashafiq.contactmanagement.entity.ContactEntity;
 import com.tahashafiq.contactmanagement.impl.ContactServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,15 +21,17 @@ import java.util.List;
 @Slf4j
 @Tag(name="Contact Apis")
 public class ContactController {
-    @Autowired
-    private ContactServiceImpl contactService;
+    private final ContactServiceImpl contactService;
 
+    @Autowired
+    public ContactController(ContactServiceImpl contactService) {
+        this.contactService = contactService;
+    }
     @GetMapping("/getContactOfUser")
     @Operation(summary = "get all the contact of User")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Contacts retrieved successfully"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized")
-    })
+    @ApiResponse(responseCode = "200", description = "Contacts retrieved successfully")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+
     public ResponseEntity<List<ContactEntity>> getAllContactOfUser(Authentication authentication) {
         String userName = authentication.getName();
         return ResponseEntity.ok(contactService.findAllContactOfUser(userName));
@@ -38,22 +40,18 @@ public class ContactController {
     @GetMapping("/getContactById/{contactId}")
     @Parameter(description = "ContactId")
     @Operation(summary = "get the contact by ContactId")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Contact retrieved successfully"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized")
-    })
+    @ApiResponse(responseCode = "200", description = "Contact retrieved successfully")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
     public  ResponseEntity<ContactEntity> getContactById(@PathVariable String contactId){
         return ResponseEntity.ok(contactService.getContactById(contactId));
     }
 
 
     @PostMapping("/createContact")
-@Operation(summary = "Creating the Contact corresponding to Particular user")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Journal created successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid journal data"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized")
-    })
+    @Operation(summary = "Creating the Contact corresponding to Particular user")
+    @ApiResponse(responseCode = "201", description = "Journal created successfully")
+    @ApiResponse(responseCode = "400", description = "Invalid journal data")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
     public ResponseEntity<ContactEntity>
     createContact(
             @RequestBody PostContactDto contactDto,
@@ -67,12 +65,10 @@ public class ContactController {
     @PutMapping("/changeContact/{contactId}")
     @Parameter(description = "ContactId")
     @Operation(summary = "Update a Contact entry")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Contact updated successfully"),
-            @ApiResponse(responseCode = "404", description = "Contact not found"),
-            @ApiResponse(responseCode = "400", description = "Invalid Contact data"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized")
-    })
+    @ApiResponse(responseCode = "200", description = "Contact updated successfully")
+    @ApiResponse(responseCode = "404", description = "Contact not found")
+    @ApiResponse(responseCode = "400", description = "Invalid Contact data")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
     public ResponseEntity<ContactEntity> changeContact(
             @PathVariable String contactId,
             @RequestBody PostContactDto contactDto,
@@ -93,11 +89,9 @@ public class ContactController {
     @DeleteMapping("/deleteContact/{contactId}")
     @Operation(summary = "Delete the Contact by Id")
     @Parameter(description = "ContactId")
-    @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Contact deleted successfully"),
-            @ApiResponse(responseCode = "404", description = "Contact not found"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized")
-    })
+    @ApiResponse(responseCode = "204", description = "Contact deleted successfully")
+    @ApiResponse(responseCode = "404", description = "Contact not found")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
     public ResponseEntity<ContactEntity> deleteContact(
             @PathVariable String contactId,
             Authentication authentication){

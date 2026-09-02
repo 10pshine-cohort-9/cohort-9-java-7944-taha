@@ -9,7 +9,6 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 public class UserServiceMethodSource {
-    private UserDetailsProvider userDetailsProvider=new UserDetailsProvider();
     public static Stream<Arguments> dummyUpdateUser(){
         UserEntity orignalEntity=dummyUserEntity();
 
@@ -31,4 +30,5 @@ public class UserServiceMethodSource {
         userEntity.setRoles("Admin");
         return userEntity;
     }
+
 }

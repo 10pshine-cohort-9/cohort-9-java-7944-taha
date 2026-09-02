@@ -13,7 +13,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
@@ -23,19 +22,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 @Slf4j
-public class UserServiceTest {
+class UserServiceTest {
     @Mock
     private UserRepository userRepository;
     @InjectMocks
     private UserServiceImpl userService;
     @Mock
     private PasswordEncoder passwordEncoder;
-
-    //    @Mock
-//    private UserEntity  userEntity;
     @ParameterizedTest
     @ArgumentsSource(UserDetailsProvider.class)
-    public void createUserTest(SignUpDto dto) {
+    void createUserTest(SignUpDto dto) {
         when(userRepository.save(any(UserEntity.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
         when(passwordEncoder.encode(anyString()))
@@ -54,7 +50,7 @@ public class UserServiceTest {
             "userIdTwo",
             "userIdThree"
     })
-    public void findByIdTest(String userId) {
+     void findByIdTest(String userId) {
         UserDetailsProvider userDetailsProvider = new UserDetailsProvider();
         UserEntity userEntity = userDetailsProvider.dummyUserEntity();
         when(userRepository.findById(userId))
@@ -68,7 +64,7 @@ public class UserServiceTest {
             "usamashafiq175",
             "muhammadshafiq175"
     })
-    public void findByUserNameTest(String userName) {
+    void findByUserNameTest(String userName) {
         UserDetailsProvider userDetailsProvider = new UserDetailsProvider();
         UserEntity userEntity = userDetailsProvider.dummyUserEntity();
         when(userRepository.findByUserName(userName)).thenReturn(userEntity);
@@ -82,7 +78,7 @@ public class UserServiceTest {
             "userIdTwo",
             "userIdThree"
     })
-    public void deleteUserTest(String userId) {
+    void deleteUserTest(String userId) {
         userService.deleteUser(userId);
         verify(userRepository).deleteById(userId);
         verifyNoMoreInteractions(userRepository);
@@ -90,7 +86,7 @@ public class UserServiceTest {
 
     @ParameterizedTest
     @MethodSource("com.tahashafiq.contactmanagement.service.UserServiceMethodSource#dummyUpdateUser")
-    public void updateUserTest(UserEntity originalEntity, SignUpDto updatedEntity) {
+    void updateUserTest(UserEntity originalEntity, SignUpDto updatedEntity) {
         when(passwordEncoder.encode(updatedEntity.getPassword())).thenReturn("encodedPassword");
         userService.updateUser(originalEntity, updatedEntity);
 

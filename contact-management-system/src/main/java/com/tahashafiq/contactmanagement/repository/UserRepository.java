@@ -1,6 +1,5 @@
 package com.tahashafiq.contactmanagement.repository;
 
-import com.fasterxml.jackson.annotation.OptBoolean;
 import com.tahashafiq.contactmanagement.entity.UserEntity;
 import com.tahashafiq.contactmanagement.provider.AuthProvider;
 import org.springframework.data.jpa.repository.JpaRepository;
