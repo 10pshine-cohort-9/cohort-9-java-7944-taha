@@ -15,9 +15,9 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
 
-    @ExceptionHandler(ResourceNotFoundException.class)
+    @ExceptionHandler(com.tahashafiq.contactmanagement.exception.ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse> handlerResourceNotFoundException(
-            ResourceNotFoundException exception) {
+            com.tahashafiq.contactmanagement.exception.ResourceNotFoundException exception) {
 
         String message = exception.getMessage();
 
