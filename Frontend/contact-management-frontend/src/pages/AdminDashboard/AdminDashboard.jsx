@@ -1,666 +1,612 @@
-import React, {
-    useEffect,
-    useState
-} from "react";
-
-import {
-    useNavigate
-} from "react-router-dom";
-
+import React, { useEffect, useState } from "react";
 import "./AdminDashboard.css";
 
+const AdminDashboard = () => {
+    const [users, setUsers] = useState([]);
+    const [contacts, setContacts] = useState([]);
 
-function AdminDashboard() {
+    const [activeTab, setActiveTab] = useState("users");
 
-    const navigate =
-        useNavigate();
+    // Selected user for Users -> User Contacts view
+    const [selectedUser, setSelectedUser] = useState(null);
 
+    const [searchTerm, setSearchTerm] = useState("");
 
-    const [users, setUsers] =
-        useState([]);
+    const [loading, setLoading] = useState(true);
+    const [contactsLoading, setContactsLoading] = useState(false);
 
-    const [contacts, setContacts] =
-        useState([]);
+    const [error, setError] = useState("");
 
-
-    const [loadingUsers, setLoadingUsers] =
-        useState(true);
-
-    const [loadingContacts, setLoadingContacts] =
-        useState(false);
-
-
-    const [error, setError] =
-        useState("");
-
-
-    const [activeTab, setActiveTab] =
-        useState("users");
-
-
-    const [searchTerm, setSearchTerm] =
-        useState("");
-
-
-    const adminToken =
-        localStorage.getItem(
-            "adminToken"
-        );
-
+    const adminToken = localStorage.getItem("adminToken");
 
     useEffect(() => {
-
-        if (!adminToken) {
-
-            navigate(
-                "/admin-login"
-            );
-
-            return;
-
-        }
-
-
         fetchUsers();
-
     }, []);
 
-
-    const handleUnauthorized = () => {
-
-        localStorage.removeItem(
-            "adminToken"
-        );
-
-        navigate(
-            "/admin-login"
-        );
-
-    };
-
+    /*
+     * =========================================================
+     * FETCH USERS
+     * =========================================================
+     */
 
     const fetchUsers = async () => {
-
         try {
-
-            setLoadingUsers(true);
-
+            setLoading(true);
             setError("");
 
-
-            const response =
-                await fetch(
-                    "http://localhost:8080/admin/getAllUser",
-                    {
-                        method: "GET",
-
-                        headers: {
-
-                            Authorization:
-                                `Bearer ${adminToken}`
-
-                        }
-
-                    }
-                );
-
-
-            if (
-                response.status === 401 ||
-                response.status === 403
-            ) {
-
-                handleUnauthorized();
-
-                return;
-
-            }
-
-
-            if (!response.ok) {
-
-                throw new Error(
-                    "Failed to load users"
-                );
-
-            }
-
-
-            const data =
-                await response.json();
-
-
-            setUsers(data);
-
-        } catch (error) {
-
-            console.error(error);
-
-            setError(
-                error.message
+            const response = await fetch(
+                "http://localhost:8080/admin/getAllUser",
+                {
+                    headers: {
+                        Authorization: `Bearer ${adminToken}`,
+                    },
+                }
             );
 
+            if (!response.ok) {
+                throw new Error("Failed to fetch users");
+            }
+
+            const usersData = await response.json();
+
+            setUsers(usersData);
+        } catch (err) {
+            console.error(err);
+
+            setError(
+                "Unable to load users. Please try again."
+            );
         } finally {
-
-            setLoadingUsers(false);
-
+            setLoading(false);
         }
-
     };
 
+    /*
+     * =========================================================
+     * FETCH ALL CONTACTS
+     *
+     * Used only by the "All Contacts" tab.
+     * =========================================================
+     */
 
-    const fetchContacts = async () => {
-
+    const fetchAllContacts = async () => {
         try {
-
-            setLoadingContacts(true);
-
+            setContactsLoading(true);
             setError("");
 
-
-            const response =
-                await fetch(
-                    "http://localhost:8080/admin/getAllContact",
-                    {
-                        method: "GET",
-
-                        headers: {
-
-                            Authorization:
-                                `Bearer ${adminToken}`
-
-                        }
-
-                    }
-                );
-
-
-            if (
-                response.status === 401 ||
-                response.status === 403
-            ) {
-
-                handleUnauthorized();
-
-                return;
-
-            }
-
-
-            if (!response.ok) {
-
-                throw new Error(
-                    "Failed to load contacts"
-                );
-
-            }
-
-
-            const data =
-                await response.json();
-
-
-            setContacts(data);
-
-        } catch (error) {
-
-            console.error(error);
-
-            setError(
-                error.message
+            const response = await fetch(
+                "http://localhost:8080/admin/getAllContact",
+                {
+                    headers: {
+                        Authorization: `Bearer ${adminToken}`,
+                    },
+                }
             );
 
+            if (!response.ok) {
+                throw new Error(
+                    "Failed to fetch all contacts"
+                );
+            }
+
+            const contactsData = await response.json();
+
+            setContacts(contactsData);
+        } catch (err) {
+            console.error(err);
+
+            setError(
+                "Unable to load contacts. Please try again."
+            );
         } finally {
-
-            setLoadingContacts(false);
-
+            setContactsLoading(false);
         }
-
     };
 
+    /*
+     * =========================================================
+     * FETCH CONTACTS OF SELECTED USER
+     *
+     * GET:
+     * /admin/getAllContact?userName=username
+     * =========================================================
+     */
 
-    const handleTabChange = (tab) => {
+    const fetchContactsOfUser = async (user) => {
+        try {
+            setContactsLoading(true);
+            setError("");
 
-        setActiveTab(tab);
+            const response = await fetch(
+                `http://localhost:8080/admin/getAllContact?userName=${encodeURIComponent(
+                    user.userName
+                )}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${adminToken}`,
+                    },
+                }
+            );
 
+            if (!response.ok) {
+                throw new Error(
+                    "Failed to fetch user's contacts"
+                );
+            }
+
+            const contactsData = await response.json();
+
+            setContacts(contactsData);
+            setSelectedUser(user);
+            setSearchTerm("");
+        } catch (err) {
+            console.error(err);
+
+            setError(
+                "Unable to load this user's contacts. Please try again."
+            );
+        } finally {
+            setContactsLoading(false);
+        }
+    };
+
+    /*
+     * =========================================================
+     * REFRESH
+     * =========================================================
+     */
+
+    const fetchDashboardData = async () => {
+        if (selectedUser) {
+            await fetchContactsOfUser(selectedUser);
+            return;
+        }
+
+        if (activeTab === "contacts") {
+            await Promise.all([
+                fetchUsers(),
+                fetchAllContacts(),
+            ]);
+            return;
+        }
+
+        await fetchUsers();
+    };
+
+    /*
+     * =========================================================
+     * DELETE USER
+     * =========================================================
+     */
+
+    const handleDeleteUser = async (userId) => {
+        const confirmed = window.confirm(
+            "Are you sure you want to delete this user?"
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+            const response = await fetch(
+                `http://localhost:8080/admin/deleteUser/${userId}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        Authorization: `Bearer ${adminToken}`,
+                    },
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error(
+                    "Failed to delete user"
+                );
+            }
+
+            setUsers(
+                (previousUsers) =>
+                    previousUsers.filter(
+                        (user) =>
+                            user.userId !== userId
+                    )
+            );
+
+            /*
+             * If the deleted user is currently selected,
+             * return to the users screen.
+             */
+            if (
+                selectedUser &&
+                selectedUser.userId === userId
+            ) {
+                setSelectedUser(null);
+                setContacts([]);
+                setSearchTerm("");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Failed to delete user.");
+        }
+    };
+
+    /*
+     * =========================================================
+     * NAVIGATION
+     * =========================================================
+     */
+
+    const handleUsersTab = () => {
+        setActiveTab("users");
+        setSelectedUser(null);
+        setContacts([]);
+        setSearchTerm("");
         setError("");
+    };
 
+    const handleAllContactsTab = async () => {
+        setActiveTab("contacts");
+        setSelectedUser(null);
         setSearchTerm("");
 
-
-        if (
-            tab === "contacts" &&
-            contacts.length === 0
-        ) {
-
-            fetchContacts();
-
-        }
-
+        await fetchAllContacts();
     };
-
-
-    const handleDeleteUser =
-        async (userId, userName) => {
-
-            const confirmed =
-                window.confirm(
-                    `Are you sure you want to delete ${userName}?`
-                );
-
-
-            if (!confirmed) {
-
-                return;
-
-            }
-
-
-            try {
-
-                const response =
-                    await fetch(
-                        `http://localhost:8080/admin/deleteUser/${userId}`,
-                        {
-                            method: "DELETE",
-
-                            headers: {
-
-                                Authorization:
-                                    `Bearer ${adminToken}`
-
-                            }
-
-                        }
-                    );
-
-
-                if (
-                    response.status === 401 ||
-                    response.status === 403
-                ) {
-
-                    handleUnauthorized();
-
-                    return;
-
-                }
-
-
-                if (!response.ok) {
-
-                    throw new Error(
-                        "Failed to delete user"
-                    );
-
-                }
-
-
-                setUsers(
-                    (previousUsers) =>
-                        previousUsers.filter(
-                            (user) =>
-                                user.userId !== userId
-                        )
-                );
-
-
-                setContacts(
-                    (previousContacts) =>
-                        previousContacts.filter(
-                            (contact) =>
-                                contact.userId !== userId
-                        )
-                );
-
-            } catch (error) {
-
-                console.error(error);
-
-                setError(
-                    error.message
-                );
-
-            }
-
-        };
-
-
-    const handleLogout = () => {
-
-        localStorage.removeItem(
-            "adminToken"
-        );
-
-        navigate(
-            "/signin"
-        );
-
-    };
-
 
     /*
+     * =========================================================
+     * BACK TO USERS
+     * =========================================================
+     */
+
+    const handleBackToUsers = () => {
+        setSelectedUser(null);
+        setContacts([]);
+        setSearchTerm("");
+        setError("");
+    };
+
+    /*
+     * =========================================================
      * FILTER USERS
+     * =========================================================
      */
 
-    const filteredUsers =
-        users.filter(
-            (user) => {
+    const filteredUsers = users.filter((user) => {
+        const search = searchTerm.toLowerCase();
 
-                const search =
-                    searchTerm.toLowerCase();
-
-
-                return (
-
-                    user.userName
-                        ?.toLowerCase()
-                        .includes(search)
-
-                    ||
-
-                    user.email
-                        ?.toLowerCase()
-                        .includes(search)
-
-                );
-
-            }
+        return (
+            user.userName
+                ?.toLowerCase()
+                .includes(search) ||
+            user.email
+                ?.toLowerCase()
+                .includes(search) ||
+            user.userId
+                ?.toLowerCase()
+                .includes(search)
         );
-
+    });
 
     /*
+     * =========================================================
      * FILTER CONTACTS
+     * =========================================================
      */
 
-    const filteredContacts =
-        contacts.filter(
-            (contact) => {
+    const filteredContacts = contacts.filter(
+        (contact) => {
+            const search =
+                searchTerm.toLowerCase();
 
-                const search =
-                    searchTerm.toLowerCase();
+            return (
+                contact.userName
+                    ?.toLowerCase()
+                    .includes(search) ||
+                contact.phoneNumber
+                    ?.toLowerCase()
+                    .includes(search) ||
+                contact.phoneLabel
+                    ?.toLowerCase()
+                    .includes(search) ||
+                contact.owner
+                    ?.toLowerCase()
+                    .includes(search)
+            );
+        }
+    );
 
+    /*
+     * =========================================================
+     * INITIAL LOADING
+     * =========================================================
+     */
 
-                return (
-
-                    contact.userName
-                        ?.toLowerCase()
-                        .includes(search)
-
-                    ||
-
-                    contact.phoneNumber
-                        ?.toLowerCase()
-                        .includes(search)
-
-                    ||
-
-                    contact.phoneLabel
-                        ?.toLowerCase()
-                        .includes(search)
-
-                );
-
-            }
+    if (loading) {
+        return (
+            <div className="admin-dashboard-loading">
+                <div className="admin-loading-spinner"></div>
+                <p>Loading dashboard...</p>
+            </div>
         );
+    }
 
+    /*
+     * =========================================================
+     * RENDER
+     * =========================================================
+     */
 
     return (
+        <div className="admin-dashboard">
 
-        <div className="admin-dashboard-page">
-
-
-            {/* SIDEBAR */}
+            {/* =================================================
+                SIDEBAR
+            ================================================= */}
 
             <aside className="admin-sidebar">
 
-                <div className="admin-brand">
+                <div className="admin-logo">
 
-                    Contact<span>Manager</span>
+                    <div className="admin-logo-icon">
+                        CM
+                    </div>
+
+                    <div>
+                        <h2>Contact Manager</h2>
+                        <span>Admin Panel</span>
+                    </div>
 
                 </div>
 
+                <nav className="admin-nav">
 
-                <div className="admin-label">
-
-                    ADMIN PANEL
-
-                </div>
-
-
-                <nav className="admin-menu">
+                    {/* USERS */}
 
                     <button
                         className={
                             activeTab === "users"
-                                ? "active"
-                                : ""
+                                ? "admin-nav-item active"
+                                : "admin-nav-item"
                         }
-                        onClick={() =>
-                            handleTabChange(
-                                "users"
-                            )
-                        }
+                        onClick={handleUsersTab}
                     >
-
-                        👥 Users
-
+                        <span>👥</span>
+                        Users
                     </button>
 
+                    {/* ALL CONTACTS */}
 
                     <button
                         className={
                             activeTab === "contacts"
-                                ? "active"
-                                : ""
+                                ? "admin-nav-item active"
+                                : "admin-nav-item"
                         }
-                        onClick={() =>
-                            handleTabChange(
-                                "contacts"
-                            )
-                        }
+                        onClick={handleAllContactsTab}
                     >
-
-                        📱 All Contacts
-
+                        <span>📇</span>
+                        All Contacts
                     </button>
 
                 </nav>
 
-
-                <button
-                    className="admin-logout-button"
-                    onClick={handleLogout}
-                >
-
-                    Logout
-
-                </button>
-
             </aside>
 
 
-            {/* CONTENT */}
+            {/* =================================================
+                MAIN CONTENT
+            ================================================= */}
 
-            <main className="admin-content">
+            <main className="admin-main">
 
+                {/* =================================================
+                    HEADER
+                ================================================= */}
 
-                <div className="admin-header">
+                <header className="admin-header">
 
                     <div>
 
                         <h1>
-
-                            {activeTab === "users"
-                                ? "Users"
-                                : "All Contacts"
-                            }
-
+                            {selectedUser
+                                ? `${selectedUser.userName}'s Contacts`
+                                : activeTab === "users"
+                                    ? "Users"
+                                    : "All Contacts"}
                         </h1>
 
-
                         <p>
-
-                            {activeTab === "users"
-                                ? "Manage registered users."
-                                : "View all contacts in the system."
-                            }
-
+                            {selectedUser
+                                ? `Contacts stored by ${selectedUser.userName}`
+                                : activeTab === "users"
+                                    ? "Manage registered application users"
+                                    : "View all contacts stored by application users"}
                         </p>
 
                     </div>
 
+                    <button
+                        className="admin-refresh-button"
+                        onClick={fetchDashboardData}
+                    >
+                        ↻ Refresh
+                    </button>
 
-                    <div className="admin-stats">
+                </header>
+
+
+                {/* =================================================
+                    ERROR
+                ================================================= */}
+
+                {error && (
+                    <div className="admin-error">
+                        {error}
+                    </div>
+                )}
+
+
+                {/* =================================================
+                    STATISTICS
+                ================================================= */}
+
+                <section className="admin-stats">
+
+                    <div className="admin-stat-card">
+
+                        <div className="admin-stat-icon">
+                            👥
+                        </div>
 
                         <div>
-
-                            <span>
-                                Total Users
-                            </span>
-
+                            <span>Total Users</span>
                             <strong>
                                 {users.length}
                             </strong>
-
                         </div>
 
+                    </div>
+
+
+                    <div className="admin-stat-card">
+
+                        <div className="admin-stat-icon">
+                            📇
+                        </div>
 
                         <div>
-
                             <span>
-                                Total Contacts
+                                {selectedUser
+                                    ? "User Contacts"
+                                    : "Loaded Contacts"}
                             </span>
 
                             <strong>
                                 {contacts.length}
                             </strong>
-
                         </div>
 
                     </div>
 
-                </div>
 
+                    <div className="admin-stat-card">
 
-                {/* SEARCH */}
+                        <div className="admin-stat-icon">
+                            📱
+                        </div>
 
-                <div className="admin-search-container">
+                        <div>
+                            <span>Contact Records</span>
 
-                    <span className="admin-search-icon">
-
-                        🔍
-
-                    </span>
-
-
-                    <input
-                        type="text"
-                        className="admin-search-input"
-                        placeholder={
-                            activeTab === "users"
-                                ? "Search users by username or email..."
-                                : "Search contacts by name, phone or label..."
-                        }
-                        value={searchTerm}
-                        onChange={(event) =>
-                            setSearchTerm(
-                                event.target.value
-                            )
-                        }
-                    />
-
-                </div>
-
-
-                {error && (
-
-                    <div className="admin-dashboard-error">
-
-                        {error}
+                            <strong>
+                                {contacts.length}
+                            </strong>
+                        </div>
 
                     </div>
 
-                )}
+                </section>
 
 
-                {/* USERS */}
+                {/* =================================================
+                    SEARCH
+                ================================================= */}
 
-                {activeTab === "users" && (
+                <div className="admin-toolbar">
 
-                    <>
+                    <div className="admin-search">
 
-                        {loadingUsers && (
+                        <span className="admin-search-icon">
+                            🔍
+                        </span>
 
-                            <p>
-                                Loading users...
-                            </p>
+                        <input
+                            type="text"
+                            value={searchTerm}
+                            onChange={(e) =>
+                                setSearchTerm(
+                                    e.target.value
+                                )
+                            }
+                            placeholder={
+                                selectedUser
+                                    ? "Search this user's contacts..."
+                                    : activeTab === "users"
+                                        ? "Search users by username, email or ID..."
+                                        : "Search contacts by name, phone, label or owner..."
+                            }
+                        />
 
-                        )}
+                    </div>
+
+                </div>
 
 
-                        {!loadingUsers &&
-                            users.length === 0 && (
+                {/* =================================================
+                    USERS LIST
+                ================================================= */}
 
-                                <div className="admin-empty-state">
+                {activeTab === "users" &&
+                    !selectedUser && (
+
+                        <section className="admin-section">
+
+                            <div className="admin-section-header">
+
+                                <div>
 
                                     <h2>
-                                        No Users Found
-                                    </h2>
-
-                                </div>
-
-                            )}
-
-
-                        {!loadingUsers &&
-                            users.length > 0 &&
-                            filteredUsers.length === 0 && (
-
-                                <div className="admin-empty-state">
-
-                                    <h2>
-                                        No Matching Users
+                                        Registered Users
                                     </h2>
 
                                     <p>
-                                        No users match "
-                                        {searchTerm}
-                                        ".
+                                        {filteredUsers.length}{" "}
+                                        user
+                                        {filteredUsers.length !== 1
+                                            ? "s"
+                                            : ""}{" "}
+                                        found
                                     </p>
 
                                 </div>
 
-                            )}
+                            </div>
 
 
-                        {!loadingUsers &&
-                            filteredUsers.length > 0 && (
+                            {filteredUsers.length === 0 ? (
+
+                                <div className="admin-empty-state">
+
+                                    <div>👥</div>
+
+                                    <h3>
+                                        No users found
+                                    </h3>
+
+                                    <p>
+                                        There are no users
+                                        matching your search.
+                                    </p>
+
+                                </div>
+
+                            ) : (
 
                                 <div className="admin-table-wrapper">
 
-                                    <table>
+                                    <table className="admin-users-table">
 
                                         <thead>
 
                                             <tr>
-
-                                                <th>
-                                                    Username
-                                                </th>
-
-                                                <th>
-                                                    Email
-                                                </th>
-
-                                                <th>
-                                                    Action
-                                                </th>
-
+                                                <th>User</th>
+                                                <th>Email</th>
+                                                <th>User ID</th>
+                                                <th>Action</th>
                                             </tr>
 
                                         </thead>
-
 
                                         <tbody>
 
@@ -671,18 +617,61 @@ function AdminDashboard() {
                                                         key={
                                                             user.userId
                                                         }
+                                                        className="admin-user-row"
+                                                        onClick={() =>
+                                                            fetchContactsOfUser(
+                                                                user
+                                                            )
+                                                        }
                                                     >
 
                                                         <td>
 
-                                                            {user.userName}
+                                                            <div className="admin-user-cell">
+
+                                                                <div className="admin-user-avatar">
+
+                                                                    {user.userName
+                                                                        ?.charAt(
+                                                                            0
+                                                                        )
+                                                                        .toUpperCase()}
+
+                                                                </div>
+
+                                                                <div>
+
+                                                                    <strong>
+                                                                        {
+                                                                            user.userName
+                                                                        }
+                                                                    </strong>
+
+                                                                    <span className="admin-view-user">
+                                                                        View contacts →
+                                                                    </span>
+
+                                                                </div>
+
+                                                            </div>
 
                                                         </td>
 
 
                                                         <td>
+                                                            {
+                                                                user.email
+                                                            }
+                                                        </td>
 
-                                                            {user.email}
+
+                                                        <td>
+
+                                                            <span className="admin-id">
+                                                                {
+                                                                    user.userId
+                                                                }
+                                                            </span>
 
                                                         </td>
 
@@ -690,17 +679,18 @@ function AdminDashboard() {
                                                         <td>
 
                                                             <button
-                                                                className="delete-user-button"
-                                                                onClick={() =>
+                                                                className="admin-delete-button"
+                                                                onClick={(
+                                                                    e
+                                                                ) => {
+                                                                    e.stopPropagation();
+
                                                                     handleDeleteUser(
-                                                                        user.userId,
-                                                                        user.userName
-                                                                    )
-                                                                }
+                                                                        user.userId
+                                                                    );
+                                                                }}
                                                             >
-
                                                                 Delete
-
                                                             </button>
 
                                                         </td>
@@ -718,65 +708,117 @@ function AdminDashboard() {
 
                             )}
 
-                    </>
-
-                )}
-
-
-                {/* CONTACTS */}
-
-                {activeTab === "contacts" && (
-
-                    <>
-
-                        {loadingContacts && (
-
-                            <p>
-                                Loading contacts...
-                            </p>
-
-                        )}
+                        </section>
+                    )}
 
 
-                        {!loadingContacts &&
-                            contacts.length === 0 && (
+                {/* =================================================
+                    SELECTED USER CONTACTS
+                ================================================= */}
 
-                                <div className="admin-empty-state">
+                {selectedUser && (
 
-                                    <h2>
-                                        No Contacts Found
-                                    </h2>
+                    <section className="admin-section">
 
+                        <div className="admin-selected-user-header">
+
+                            <button
+                                className="admin-back-button"
+                                onClick={
+                                    handleBackToUsers
+                                }
+                            >
+                                ← Back to Users
+                            </button>
+
+                            <div className="admin-selected-user-info">
+
+                                <div className="admin-selected-user-avatar">
+                                    {selectedUser.userName
+                                        ?.charAt(0)
+                                        .toUpperCase()}
                                 </div>
 
-                            )}
-
-
-                        {!loadingContacts &&
-                            contacts.length > 0 &&
-                            filteredContacts.length === 0 && (
-
-                                <div className="admin-empty-state">
+                                <div>
 
                                     <h2>
-                                        No Matching Contacts
+                                        {
+                                            selectedUser.userName
+                                        }
                                     </h2>
 
                                     <p>
-                                        No contacts match "
-                                        {searchTerm}
-                                        ".
+                                        {
+                                            selectedUser.email
+                                        }
                                     </p>
 
                                 </div>
 
-                            )}
+                            </div>
+
+                        </div>
 
 
-                        <div className="admin-contacts-grid">
+                        <div className="admin-section-header">
 
-                            {!loadingContacts &&
-                                filteredContacts.map(
+                            <div>
+
+                                <h2>
+                                    Contacts
+                                </h2>
+
+                                <p>
+                                    {
+                                        filteredContacts.length
+                                    }{" "}
+                                    contact
+                                    {filteredContacts.length !==
+                                    1
+                                        ? "s"
+                                        : ""}{" "}
+                                    found
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        {contactsLoading ? (
+
+                            <div className="admin-contacts-loading">
+
+                                <div className="admin-loading-spinner"></div>
+
+                                <p>
+                                    Loading contacts...
+                                </p>
+
+                            </div>
+
+                        ) : filteredContacts.length === 0 ? (
+
+                            <div className="admin-empty-state">
+
+                                <div>📇</div>
+
+                                <h3>
+                                    No contacts found
+                                </h3>
+
+                                <p>
+                                    This user has no contacts
+                                    matching your search.
+                                </p>
+
+                            </div>
+
+                        ) : (
+
+                            <div className="admin-contacts-grid">
+
+                                {filteredContacts.map(
                                     (contact) => (
 
                                         <div
@@ -789,33 +831,32 @@ function AdminDashboard() {
                                             <div className="admin-contact-avatar">
 
                                                 {contact.userName
-                                                    ?.charAt(0)
-                                                    .toUpperCase()
-                                                }
+                                                    ?.charAt(
+                                                        0
+                                                    )
+                                                    .toUpperCase()}
 
                                             </div>
 
 
-                                            <div>
+                                            <div className="admin-contact-info">
 
                                                 <h3>
-
-                                                    {contact.userName}
-
+                                                    {
+                                                        contact.userName
+                                                    }
                                                 </h3>
 
-
                                                 <p>
-
-                                                    {contact.phoneNumber}
-
+                                                    {
+                                                        contact.phoneNumber
+                                                    }
                                                 </p>
 
-
                                                 <span>
-
-                                                    {contact.phoneLabel}
-
+                                                    {
+                                                        contact.phoneLabel
+                                                    }
                                                 </span>
 
                                             </div>
@@ -825,19 +866,170 @@ function AdminDashboard() {
                                     )
                                 )}
 
-                        </div>
+                            </div>
 
-                    </>
+                        )}
+
+                    </section>
 
                 )}
+
+
+                {/* =================================================
+                    ALL CONTACTS
+                ================================================= */}
+
+                {activeTab === "contacts" &&
+                    !selectedUser && (
+
+                        <section className="admin-section">
+
+                            <div className="admin-section-header">
+
+                                <div>
+
+                                    <h2>
+                                        All Contacts
+                                    </h2>
+
+                                    <p>
+                                        {
+                                            filteredContacts.length
+                                        }{" "}
+                                        contact
+                                        {filteredContacts.length !==
+                                        1
+                                            ? "s"
+                                            : ""}{" "}
+                                        found
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            {contactsLoading ? (
+
+                                <div className="admin-contacts-loading">
+
+                                    <div className="admin-loading-spinner"></div>
+
+                                    <p>
+                                        Loading contacts...
+                                    </p>
+
+                                </div>
+
+                            ) : filteredContacts.length === 0 ? (
+
+                                <div className="admin-empty-state">
+
+                                    <div>📇</div>
+
+                                    <h3>
+                                        No contacts found
+                                    </h3>
+
+                                    <p>
+                                        There are no contacts
+                                        matching your search.
+                                    </p>
+
+                                </div>
+
+                            ) : (
+
+                                <div className="admin-contacts-grid">
+
+                                    {filteredContacts.map(
+                                        (contact) => (
+
+                                            <div
+                                                className="admin-contact-card"
+                                                key={
+                                                    contact.contactId
+                                                }
+                                            >
+
+                                                <div className="admin-contact-avatar">
+
+                                                    {contact.userName
+                                                        ?.charAt(
+                                                            0
+                                                        )
+                                                        .toUpperCase()}
+
+                                                </div>
+
+
+                                                <div className="admin-contact-info">
+
+                                                    <h3>
+                                                        {
+                                                            contact.userName
+                                                        }
+                                                    </h3>
+
+                                                    <p>
+                                                        {
+                                                            contact.phoneNumber
+                                                        }
+                                                    </p>
+
+                                                    <span>
+                                                        {
+                                                            contact.phoneLabel
+                                                        }
+                                                    </span>
+
+
+                                                    <div className="admin-contact-owner">
+
+                                                        <span className="owner-label">
+                                                            Owner
+                                                        </span>
+
+                                                        <strong>
+                                                            {
+                                                                contact.owner ||
+                                                                "Unknown"
+                                                            }
+                                                        </strong>
+
+                                                    </div>
+
+
+                                                    {contact.userId && (
+
+                                                        <div className="admin-contact-user-id">
+                                                            User ID:{" "}
+                                                            {
+                                                                contact.userId
+                                                            }
+                                                        </div>
+
+                                                    )}
+
+                                                </div>
+
+                                            </div>
+
+                                        )
+                                    )}
+
+                                </div>
+
+                            )}
+
+                        </section>
+
+                    )}
 
             </main>
 
         </div>
-
     );
-
-}
-
+};
 
 export default AdminDashboard;

@@ -1,5 +1,6 @@
 package com.tahashafiq.contactmanagement.service;
 
+import com.tahashafiq.contactmanagement.dto.AdminDashboardDto;
 import com.tahashafiq.contactmanagement.dto.PostContactDto;
 import com.tahashafiq.contactmanagement.entity.ContactEntity;
 
@@ -7,7 +8,7 @@ import java.util.List;
 
 public interface ContactService {
     //get all the contacts
-    List<ContactEntity> findAllContact();
+    List<AdminDashboardDto> findAllContact();
 
 //get all contact of a particular user
     List<ContactEntity> findAllContactOfUser(String userName);

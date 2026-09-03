@@ -1,5 +1,6 @@
 package com.tahashafiq.contactmanagement.controller;
 
+import com.tahashafiq.contactmanagement.dto.AdminDashboardDto;
 import com.tahashafiq.contactmanagement.dto.GetUserDto;
 import com.tahashafiq.contactmanagement.entity.ContactEntity;
 import com.tahashafiq.contactmanagement.impl.ContactServiceImpl;
@@ -30,7 +31,8 @@ public class AdminController {
     @ApiResponse(responseCode = "201",description = "All User are returned")
     @ApiResponse(responseCode = "401",description = "Unauthorized")
 
-    public ResponseEntity<List<GetUserDto>> getAllUser(){
+    public ResponseEntity<List<GetUserDto>> getAllUser()
+    {
         return ResponseEntity.ok(userService.findAllUsers());
     }
 
@@ -54,8 +56,14 @@ public class AdminController {
     @Operation(summary = "get all the contact")
     @ApiResponse(responseCode = "200", description = "Contacts retrieved successfully")
     @ApiResponse(responseCode = "401", description = "Unauthorized")
-    public ResponseEntity<List<ContactEntity>> getAllContact() {
+    public ResponseEntity<List<AdminDashboardDto>> getAllContact() {
         return ResponseEntity.ok(contactService.findAllContact());
     }
-
+    @GetMapping("/getAllContactOfUser")
+    @Operation(summary = "get all the contact")
+    @ApiResponse(responseCode = "200", description = "Contacts retrieved successfully")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+public ResponseEntity<List<ContactEntity>> getAllContactofUser(@RequestParam String userName){
+        return ResponseEntity.ok(contactService.findAllContactOfUser(userName));
+    }
 }

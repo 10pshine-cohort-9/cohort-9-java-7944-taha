@@ -1,5 +1,6 @@
 package com.tahashafiq.contactmanagement.impl;
 
+import com.tahashafiq.contactmanagement.dto.AdminDashboardDto;
 import com.tahashafiq.contactmanagement.exception.ResourceNotFoundException;
 
 import com.tahashafiq.contactmanagement.dto.PostContactDto;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -29,8 +31,23 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    public List<ContactEntity> findAllContact() {
-        return contactRepository.findAll();
+    public List<AdminDashboardDto> findAllContact() {
+        List<ContactEntity> all = contactRepository.findAll();
+        return all.stream() .map(this::mapToAdminContactDto) .collect(Collectors.toList());
+    }
+
+    private AdminDashboardDto mapToAdminContactDto(ContactEntity contactEntity) {
+        UserEntity owner = contactEntity.getUserEntity();
+        AdminDashboardDto adminDashboardDto = new AdminDashboardDto();
+        if(owner!=null){
+            adminDashboardDto.setOwner(owner.getUserName());
+            adminDashboardDto.setUserId(owner.getUserId());
+        }
+        adminDashboardDto.setContactId(contactEntity.getContactId());
+        adminDashboardDto.setPhoneNumber(contactEntity.getPhoneNumber());
+        adminDashboardDto.setPhoneLabel(contactEntity.getPhoneLabel());
+        adminDashboardDto.setUserName(contactEntity.getUserName());
+        return  adminDashboardDto;
     }
 
     @Override
