@@ -2,10 +2,9 @@ package com.tahashafiq.contactmanagement.controller;
 
 import com.tahashafiq.contactmanagement.dto.GetUserDto;
 import com.tahashafiq.contactmanagement.dto.SignUpDto;
-import com.tahashafiq.contactmanagement.entity.ContactEntity;
 import com.tahashafiq.contactmanagement.entity.UserEntity;
 import com.tahashafiq.contactmanagement.service.ContactDetailsProvider;
-import com.tahashafiq.contactmanagement.service.ContactMethodSource;
+
 
 import java.util.List;
 

@@ -6,7 +6,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.List;
 import com.tahashafiq.contactmanagement.filter.JwtFilter;
 import com.tahashafiq.contactmanagement.impl.JwtServiceImplementation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,19 +23,19 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SpringSecurity {
+    private final GoogleOAuthSuccessHandler googleOAuthSuccessHandler;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private GoogleOAuthSuccessHandler googleOAuthSuccessHandler;
-
-    @Autowired
-    PasswordEncoder passwordEncoder;
-    @Autowired
-    private JwtFilter jwtFilter;
-
-@Autowired
-    JwtServiceImplementation  jwtServiceImplementation;
+    private final JwtFilter jwtFilter;
+    private final JwtServiceImplementation  jwtServiceImplementation;
+SpringSecurity(GoogleOAuthSuccessHandler googleOAuthSuccessHandler, PasswordEncoder passwordEncoder, JwtFilter jwtFilter, JwtServiceImplementation jwtServiceImplementation) {
+    this.googleOAuthSuccessHandler = googleOAuthSuccessHandler;
+    this.passwordEncoder = passwordEncoder;
+    this.jwtFilter = jwtFilter;
+    this.jwtServiceImplementation = jwtServiceImplementation;
+}
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http){
 
         http
                 .cors(Customizer.withDefaults())

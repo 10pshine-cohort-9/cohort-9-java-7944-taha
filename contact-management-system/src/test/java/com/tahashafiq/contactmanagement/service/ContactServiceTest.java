@@ -7,23 +7,20 @@ import com.tahashafiq.contactmanagement.entity.UserEntity;
 import com.tahashafiq.contactmanagement.impl.ContactServiceImpl;
 import com.tahashafiq.contactmanagement.impl.UserServiceImpl;
 import com.tahashafiq.contactmanagement.repository.ContactRepository;
-import com.tahashafiq.contactmanagement.repository.UserRepository;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
-public class ContactServiceTest {
+class ContactServiceTest {
 
     @Mock
     private ContactRepository contactRepository;
@@ -33,9 +30,6 @@ public class ContactServiceTest {
 
     @InjectMocks
     private ContactServiceImpl contactService;
-
-    @Mock
-    private UserRepository userRepository;
 
 
     @ParameterizedTest
@@ -74,45 +68,27 @@ public class ContactServiceTest {
 
         UserDetailsProvider provider = new UserDetailsProvider();
         UserEntity userEntity = provider.dummyUserEntity();
-        userEntity.setContactEntities(Arrays.asList(contactEntity));
+        userEntity.setContactEntities(List.of(contactEntity));
 
         when(contactRepository.findAllByUserName(userName)).thenReturn(userEntity.getContactEntities());
 
         assertNotNull(contactService.findContactsByUserName(userName));
     }
 
-//@ParameterizedTest
-//@CsvSource({
-//        "123-456, TahaShafiq",
-//})
-//void deleteContactTest(String contactId,String userName){
-//        ContactDetailsProvider contactDetailsProvider = new ContactDetailsProvider();
-//        ContactEntity contactEntity = contactDetailsProvider.dummyContactEntity();
-//        contactEntity.setContactId(contactId);
-//
-//        UserDetailsProvider provider = new UserDetailsProvider();
-//        UserEntity userEntity = provider.dummyUserEntity();
-//        userEntity.setContactEntities(new ArrayList<>(Arrays.asList(contactEntity)));
-//
-//
-//        contactService.deleteContactById(contactId,userName);
-//        verify(contactRepository).delete(contactEntity);
-//    }
     @ParameterizedTest
     @CsvSource({
             "123-456, TahaShafiq"
     })
-    void updateContactTest(String contactId,String userName){
+    void updateContactTest(String contactId){
         ContactDetailsProvider contactDetailsProvider = new ContactDetailsProvider();
         ContactEntity contactEntity = contactDetailsProvider.dummyContactEntity();
         contactEntity.setContactId(contactId);
 
         UserDetailsProvider provider = new UserDetailsProvider();
         UserEntity userEntity = provider.dummyUserEntity();
-        userEntity.setContactEntities(new ArrayList<>(Arrays.asList(contactEntity)));
+        userEntity.setContactEntities(new ArrayList<>(List.of(contactEntity)));
 
-        ContactMethodSource contactMethodSource = new ContactMethodSource();
-        PostContactDto postContactDto = contactMethodSource.dummyUpdateContact();
+        PostContactDto postContactDto = ContactMethodSource.dummyUpdateContact();
 
         when(contactRepository.save(contactEntity)).thenReturn(contactEntity);
         ContactEntity updatedEntity = contactService.updateContact(postContactDto, contactEntity);

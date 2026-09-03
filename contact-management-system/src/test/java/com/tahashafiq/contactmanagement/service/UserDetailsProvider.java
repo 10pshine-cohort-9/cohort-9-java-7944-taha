@@ -2,6 +2,7 @@ package com.tahashafiq.contactmanagement.service;
 
 import com.tahashafiq.contactmanagement.dto.SignUpDto;
 import com.tahashafiq.contactmanagement.entity.UserEntity;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
@@ -13,7 +14,7 @@ import java.util.stream.Stream;
 
 public class UserDetailsProvider implements ArgumentsProvider {
     @Override
-    public Stream<? extends Arguments> provideArguments(ParameterDeclarations parameters, ExtensionContext context) throws Exception {
+    public Stream<? extends Arguments> provideArguments(@NonNull ParameterDeclarations parameters, @NonNull ExtensionContext context) {
         SignUpDto user1=new SignUpDto();
         user1.setUserName("Tahashafiq175");
         user1.setPassword("Tahashafiq123");
@@ -41,17 +42,4 @@ public class UserDetailsProvider implements ArgumentsProvider {
         return userEntity;
     }
 
-    public Stream<? extends Arguments> dummyUpdatedUser(ParameterDeclarations parameters, ExtensionContext context) throws Exception{
-        UserEntity originalEntity=dummyUserEntity();
-
-        UserEntity updatedEntity=new UserEntity();
-        updatedEntity.setUserId(originalEntity.getUserId());
-        updatedEntity.setFirstName("Usama");
-        updatedEntity.setLastName("Shafiq");
-        updatedEntity.setContactEntities(new ArrayList<>());
-        updatedEntity.setUserName("Usamashafiq175");
-        updatedEntity.setPassword("Usamashafiq123");
-        updatedEntity.setRoles("Admin");
-        return Stream.of(Arguments.of(updatedEntity,originalEntity));
-    }
 }

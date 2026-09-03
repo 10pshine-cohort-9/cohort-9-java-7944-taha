@@ -2,19 +2,18 @@ package com.tahashafiq.contactmanagement.service;
 
 import com.tahashafiq.contactmanagement.dto.PostContactDto;
 import com.tahashafiq.contactmanagement.entity.ContactEntity;
-import com.tahashafiq.contactmanagement.entity.UserEntity;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.support.ParameterDeclarations;
 
-import java.util.ArrayList;
-import java.util.UUID;
 import java.util.stream.Stream;
 
 public class ContactDetailsProvider implements ArgumentsProvider {
+    @SuppressWarnings("NullableProblems")
     @Override
-    public Stream<? extends Arguments> provideArguments(ParameterDeclarations parameters, ExtensionContext context) throws Exception {
+    public Stream<? extends Arguments> provideArguments(@NonNull ParameterDeclarations parameters, @NonNull ExtensionContext context){
         PostContactDto contactEntity1=new PostContactDto();
         contactEntity1.setPhoneNumber("0300-6863930");
 

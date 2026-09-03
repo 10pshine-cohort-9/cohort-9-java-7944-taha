@@ -1,5 +1,6 @@
 package com.tahashafiq.contactmanagement.impl;
 
+import com.tahashafiq.contactmanagement.exception.ResourceNotFoundException;
 import com.tahashafiq.contactmanagement.dto.GetUserDto;
 import com.tahashafiq.contactmanagement.dto.LoginDto;
 import com.tahashafiq.contactmanagement.dto.SignUpDto;
@@ -9,7 +10,7 @@ import com.tahashafiq.contactmanagement.provider.AuthProvider;
 import com.tahashafiq.contactmanagement.repository.UserRepository;
 import com.tahashafiq.contactmanagement.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,12 +21,15 @@ import java.util.UUID;
 @Service
 @Slf4j
 public class UserServiceImpl implements UserService {
-    @Autowired
-    PasswordEncoder passwordEncoder;
 
-    @Autowired
-    UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
+   private final UserRepository userRepository;
+
+   UserServiceImpl(PasswordEncoder passwordEncoder, UserRepository userRepository) {
+       this.passwordEncoder = passwordEncoder;
+        this.userRepository = userRepository;
+   }
     @Override
     public LoginDto signInOption(LoginDto loginDto) {
         if ((loginDto.getUserName() == null ||
@@ -40,7 +44,7 @@ public class UserServiceImpl implements UserService {
                     );
 
             if (user == null) {
-                throw new RuntimeException(
+                throw new ResourceNotFoundException(
                         "User not found with this email"
                 );
             }
@@ -113,7 +117,6 @@ public class UserServiceImpl implements UserService {
                 byUserName.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
             }
         }
-        assert byUserName != null;
         return userRepository.save(byUserName);
     }
 
@@ -123,14 +126,13 @@ public class UserServiceImpl implements UserService {
     }
 
     public UserEntity findEntityByUserName(String userName) {
-        UserEntity byUserName = userRepository.findByUserName(userName);
-        return byUserName;
+        return userRepository.findByUserName(userName);
     }
 
 
-    ////   Mapping Logic as if we does not want to show the user who request all the detials/
-    /// so we simply create separate dtos containing the fields that we want to return
-    /// to the user  //
+    //  Mapping Logic as if we does not want to show the user who request all the detials/
+    // so we simply create separate dtos containing the fields that we want to return
+    // to the user  //
 
 
     private GetUserDto mapToDto(UserEntity user) {
@@ -176,7 +178,7 @@ public class UserServiceImpl implements UserService {
     public UserEntity manageGoogleUser(String firstName, String lastName, String email, String providerId) {
 
         Optional<UserEntity> byAuthProviderAndProviderId = userRepository.findByAuthProviderAndProviderId(AuthProvider.GOOGLE, providerId);
-        if(!byAuthProviderAndProviderId.isEmpty()){
+        if(byAuthProviderAndProviderId.isPresent()){
             return  byAuthProviderAndProviderId.get();
         }
 
