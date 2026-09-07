@@ -1,0 +1,123 @@
+package com.tahashafiq.contactmanagement.config;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
+import com.tahashafiq.contactmanagement.filter.JwtFilter;
+import com.tahashafiq.contactmanagement.impl.JwtServiceImplementation;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+@Configuration
+@EnableWebSecurity
+public class SpringSecurity {
+    private final GoogleOAuthSuccessHandler googleOAuthSuccessHandler;
+    private final PasswordEncoder passwordEncoder;
+
+    private final JwtFilter jwtFilter;
+    private final JwtServiceImplementation  jwtServiceImplementation;
+SpringSecurity(GoogleOAuthSuccessHandler googleOAuthSuccessHandler, PasswordEncoder passwordEncoder, JwtFilter jwtFilter, JwtServiceImplementation jwtServiceImplementation) {
+    this.googleOAuthSuccessHandler = googleOAuthSuccessHandler;
+    this.passwordEncoder = passwordEncoder;
+    this.jwtFilter = jwtFilter;
+    this.jwtServiceImplementation = jwtServiceImplementation;
+}
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http){
+
+        http
+                .cors(Customizer.withDefaults())
+                .authorizeHttpRequests(authorizeRequests ->
+                        authorizeRequests
+                                .requestMatchers(
+                                        "/public/**",
+                                        "/v3/api-docs/**",
+                                        "/oauth2/**",
+                                        "/login/**",
+                                        "/swagger-ui.html",
+                                        "/swagger-ui/**"
+                                ).permitAll()
+                                .requestMatchers("/users/**", "/contacts/**").authenticated()
+                                .requestMatchers("/admin/**").hasRole("ADMIN")
+                                .anyRequest().authenticated()
+                )
+                .oauth2Login(oauth ->
+                        oauth.successHandler(googleOAuthSuccessHandler)
+                );
+
+        http.sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        );
+
+        http.csrf(AbstractHttpConfigurer::disable);
+
+        http.authenticationProvider(authenticationProvider());
+
+        http.addFilterBefore(
+                jwtFilter,
+                UsernamePasswordAuthenticationFilter.class
+        );
+
+        return http.build();
+    }
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        configuration.setAllowedOrigins(
+                List.of("http://localhost:5173")
+        );
+
+        configuration.setAllowedMethods(
+                List.of(
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "DELETE",
+                        "OPTIONS"
+                )
+        );
+
+        configuration.setAllowedHeaders(
+                List.of("*")
+        );
+
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source =
+                new UrlBasedCorsConfigurationSource();
+
+        source.registerCorsConfiguration(
+                "/**",
+                configuration
+        );
+
+        return source;
+    }
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(jwtServiceImplementation);
+        provider.setPasswordEncoder(passwordEncoder);
+        return provider;
+    }
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) {
+        return config.getAuthenticationManager();
+    }
+
+
+}
+
